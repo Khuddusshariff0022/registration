@@ -121,7 +121,6 @@ public class IdrepoDraftService {
                 ErrorDTO error = response.getErrors().get(0);
                 regProcLogger.error("Error occured while updating draft for id : " + id, error.toString());
                 if (response.getErrors().get(0).getErrorCode().equalsIgnoreCase(ID_REPO_KEY_MANAGER_ERROR)) {
-                    regProcLogger.error("Error occured Deleting the Draft : " + id, error.toString());
                     throw new IdrepoDraftReprocessableException(error.getErrorCode(), error.getMessage());
                 } else {
                     throw new IdrepoDraftException(error.getErrorCode(), error.getMessage());
