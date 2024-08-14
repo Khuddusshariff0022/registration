@@ -32,7 +32,10 @@ import io.mosip.registration.processor.core.abstractverticle.MosipVerticleManage
 		"io.mosip.registration.processor.packet.storage.config",
 		"io.mosip.registration.processor.core.kernel.beans",
 		"io.mosip.registration.processor.packet.manager.config",
-		"io.mosip.kernel.packetmanager.config"})
+        "io.mosip.kernel.keymanager.hsm.impl",
+//        "io.mosip.kernel.keymanager.hsm.impl.pkcs"
+//		"${mosip.kernel.keymanager.hsm}"
+})
 public class BioDedupeStage extends MosipVerticleAPIManager {
 
 	private static final String STAGE_PROPERTY_PREFIX = "mosip.regproc.bio.dedupe.";

@@ -20,12 +20,14 @@ public class BioDedupeApplication {
 				"io.mosip.registration.processor.packet.storage.config",
 				"io.mosip.registration.processor.core.kernel.beans",
 				"io.mosip.registration.processor.packet.manager.config",
-				"io.mosip.kernel.packetmanager.config");
+				"io.mosip.kernel.packetmanager.config"
+//                "io.mosip.kernel.keymanager.hsm.impl"
+//                "io.mosip.kernel.keymanager.hsm.impl.pkcs"
+        );
 
 		configApplicationContext.refresh();
 		BioDedupeStage bioDedupeStage = configApplicationContext.getBean(BioDedupeStage.class);
 		bioDedupeStage.deployVerticle();
 
 	}
-
 }
