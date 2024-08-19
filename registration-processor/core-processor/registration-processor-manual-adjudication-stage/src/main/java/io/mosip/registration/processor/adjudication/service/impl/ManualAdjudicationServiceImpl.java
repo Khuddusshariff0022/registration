@@ -496,6 +496,7 @@ public class ManualAdjudicationServiceImpl implements ManualAdjudicationService 
 	@SuppressWarnings("rawtypes")
 	private String CreateDataShareUrl(DataShareRequestDto requestDto, LinkedHashMap<String, Object> policy) throws JsonProcessingException, MalformedURLException, ApisResourceAccessException, DataShareException {
 		String req = JsonUtils.javaObjectToJsonString(requestDto);
+        regProcLogger.info("Data share Request : " +req);
 
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		map.add("name", MANUAL_ADJUDICATION);
