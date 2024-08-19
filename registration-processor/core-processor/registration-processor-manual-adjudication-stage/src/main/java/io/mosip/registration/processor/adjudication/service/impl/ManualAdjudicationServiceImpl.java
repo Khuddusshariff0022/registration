@@ -456,7 +456,8 @@ public class ManualAdjudicationServiceImpl implements ManualAdjudicationService 
 		LinkedHashMap<String, Object> policy = getPolicy();
 		Map<String, String> policyMap = getPolicyMap(policy);
 		Map<String, String> demographicMap  = getDemographicMap(policyMap);
-
+        regProcLogger.info(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(), id,
+                "Id to fetch data from idrepo :: "+id);
 		ResponseDTO responseDTO=idRepoService.getIdResponseFromIDRepo(id);
 
 		String identityResponse = mapper.writeValueAsString(responseDTO.getIdentity());
@@ -784,7 +785,9 @@ public class ManualAdjudicationServiceImpl implements ManualAdjudicationService 
 			if(registrationStatusDto.getRegistrationType().equalsIgnoreCase(RegistrationType.UPDATE.name())
 					|| registrationStatusDto.getRegistrationType().equalsIgnoreCase(RegistrationType.RES_UPDATE.name())) {
 				String uinField = utility.getUIn(id, registrationStatusDto.getRegistrationType(), ProviderStageName.MANUAL_ADJUDICATION);
-				ReferenceURL referenceURL1=new ReferenceURL();
+                regProcLogger.info(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(), id,
+                        "adding refrence Uin :: "+uinField);
+                ReferenceURL referenceURL1=new ReferenceURL();
 				referenceURL1.setSource(ID_REPO);
 				referenceURL1.setStatus(PROCESSED);
 				referenceURL1.setURL(
