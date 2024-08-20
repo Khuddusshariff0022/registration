@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import io.mosip.kernel.core.util.CryptoUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -608,7 +609,7 @@ public class AbisHandlerStage extends MosipVerticleAPIManager {
 				policyTypeAndSubTypeMap);
 
 		byte[] content = cbeffutil.createXML(filterExceptionBiometrics(biometricRecord,id,process).getSegments());
-        regProcLogger.info("Abis Handler stage :: Rid : " +id+" cbeff : "+new String(content));
+        regProcLogger.info("Abis Handler stage :: Rid : " +id+" cbeff : "+ CryptoUtil.encodeToURLSafeBase64(content) );
 
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		map.add("name", individualBiometricsLabel);
