@@ -608,6 +608,7 @@ public class AbisHandlerStage extends MosipVerticleAPIManager {
 				policyTypeAndSubTypeMap);
 
 		byte[] content = cbeffutil.createXML(filterExceptionBiometrics(biometricRecord,id,process).getSegments());
+        regProcLogger.info("Abis Handler stage :: Rid : " +id+" cbeff : "+new String(content));
 
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		map.add("name", individualBiometricsLabel);
