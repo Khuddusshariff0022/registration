@@ -474,18 +474,37 @@ public class UinGeneratorStage extends MosipVerticleAPIManager {
 						demographicIdentity.putIfAbsent(e.getKey(), hashMap);
 					}
 					else if (json instanceof JSONArray) {
-						List jsonList = new ArrayList<>();
-						JSONArray jsonArray = new JSONArray(value);
-						for (int i = 0; i < jsonArray.length(); i++) {
-							Object obj = jsonArray.get(i);
-							HashMap<String, Object> hashMap = objectMapper.readValue(obj.toString(), HashMap.class);
-							if(trimWhitespaces && hashMap.get("value") instanceof String) {
-								hashMap.put("value",((String)hashMap.get("value")).trim());
-							}
-							jsonList.add(hashMap);
-						}
-						demographicIdentity.putIfAbsent(e.getKey(), jsonList);
-					} else
+//						List jsonList = new ArrayList<>();
+//						JSONArray jsonArray = new JSONArray(value);
+//						for (int i = 0; i < jsonArray.length(); i++) {
+//							Object obj = jsonArray.get(i);
+//							HashMap<String, Object> hashMap = objectMapper.readValue(obj.toString(), HashMap.class);
+//							if(trimWhitespaces && hashMap.get("value") instanceof String) {
+//								hashMap.put("value",((String)hashMap.get("value")).trim());
+//							}
+//							jsonList.add(hashMap);
+//						}
+//						demographicIdentity.putIfAbsent(e.getKey(), jsonList);
+
+                        List jsonList = new ArrayList<>();
+
+                        JSONArray jsonArray = new JSONArray(value);
+                        if (jsonArray.length() > 0 && jsonArray.get(0) instanceof String) {
+                            List<String> stringList = new ArrayList<>();
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                stringList.add(jsonArray.getString(i));
+                            }
+                            demographicIdentity.putIfAbsent(e.getKey(), stringList);
+                        } else {
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                Object obj = jsonArray.get(i);
+                                HashMap<String, Object> hashMap = mapper.readValue(obj.toString(), HashMap.class);
+                                jsonList.add(hashMap);
+                            }
+                        }
+                        demographicIdentity.putIfAbsent(e.getKey(), jsonList);
+
+                    } else
 						demographicIdentity.putIfAbsent(e.getKey(), value);
 				} else
 					demographicIdentity.putIfAbsent(e.getKey(), value);
