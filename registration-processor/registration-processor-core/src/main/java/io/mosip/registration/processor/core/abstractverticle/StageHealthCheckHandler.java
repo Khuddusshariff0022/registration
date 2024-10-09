@@ -17,10 +17,10 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
 
 import org.apache.activemq.command.ActiveMQBytesMessage;
 import org.apache.commons.io.FileUtils;
@@ -38,7 +38,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.kernel.core.util.StringUtils;
 import io.mosip.kernel.core.virusscanner.spi.VirusScanner;
 import io.mosip.registration.processor.core.constant.HealthConstant;
 import io.mosip.registration.processor.core.constant.LoggerFileConstant;
@@ -97,7 +96,7 @@ public class StageHealthCheckHandler implements HealthCheckHandler {
 	private static final String WIN_UTIL = "winutils.exe";
 	private static final String CLASSPATH_PREFIX = "classpath:";
 	private static final int THRESHOLD = 10485760;
-	javax.jms.Connection connection = null;
+	jakarta.jms.Connection connection = null;
 	private Session session = null;
 	MessageConsumer messageConsumer;
 	MessageProducer messageProducer;
@@ -320,22 +319,20 @@ public class StageHealthCheckHandler implements HealthCheckHandler {
 	public void senderHealthHandler(Promise<Status> promise, Vertx vertx, MosipEventBus eventBus, String address) {
 		try {
 			eventBus.senderHealthCheck((healthCheckDto) -> {
-					try {
+				try {
 					if (healthCheckDto.isEventBusConnected()) {
-							final JsonObject result = resultBuilder.create()
-									.add(HealthConstant.RESPONSE, HealthConstant.PING).build();
-							promise.complete(Status.OK(result));
-						} else {
-							final JsonObject result = resultBuilder.create()
+						final JsonObject result = resultBuilder.create()
+								.add(HealthConstant.RESPONSE, HealthConstant.PING).build();
+						promise.complete(Status.OK(result));
+					} else {
+						final JsonObject result = resultBuilder.create()
 								.add(HealthConstant.ERROR, healthCheckDto.getFailureReason()).build();
-							promise.complete(Status.KO(result));
-						}
-
-					} catch (Exception e) {
-						final JsonObject result = resultBuilder.create().add(HealthConstant.ERROR, e.getMessage())
-								.build();
 						promise.complete(Status.KO(result));
 					}
+				} catch (Exception e) {
+					final JsonObject result = resultBuilder.create().add(HealthConstant.ERROR, e.getMessage()).build();
+					promise.complete(Status.KO(result));
+				}
 			}, address);
 		} catch (Exception e) {
 			final JsonObject result = resultBuilder.create().add(HealthConstant.ERROR, e.getMessage()).build();
@@ -351,23 +348,22 @@ public class StageHealthCheckHandler implements HealthCheckHandler {
 	public void consumerHealthHandler(Promise<Status> promise, Vertx vertx, MosipEventBus eventBus, String address) {
 		try {
 			eventBus.consumerHealthCheck((healthCheckDto) -> {
-					try {
+				try {
 
 					if (healthCheckDto.isEventBusConnected()) {
-							final JsonObject result = resultBuilder.create()
-								.add(HealthConstant.RESPONSE, healthCheckDto.isEventBusConnected()).build();
-							promise.complete(Status.OK(result));
-						} else {
-							final JsonObject result = resultBuilder.create()
-								.add(HealthConstant.ERROR, healthCheckDto.getFailureReason()).build();
-							promise.complete(Status.KO(result));
-						}
-
-					} catch (Exception e) {
 						final JsonObject result = resultBuilder.create()
-								.add(HealthConstant.ERROR, e.getMessage()).build();
+								.add(HealthConstant.RESPONSE, healthCheckDto.isEventBusConnected()).build();
+						promise.complete(Status.OK(result));
+					} else {
+						final JsonObject result = resultBuilder.create()
+								.add(HealthConstant.ERROR, healthCheckDto.getFailureReason()).build();
 						promise.complete(Status.KO(result));
 					}
+
+				} catch (Exception e) {
+					final JsonObject result = resultBuilder.create().add(HealthConstant.ERROR, e.getMessage()).build();
+					promise.complete(Status.KO(result));
+				}
 			}, address);
 		} catch (Exception e) {
 			final JsonObject result = resultBuilder.create().add(HealthConstant.ERROR, e.getMessage()).build();

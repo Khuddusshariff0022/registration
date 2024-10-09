@@ -17,14 +17,14 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.jms.BytesMessage;
-import javax.jms.Connection;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.Connection;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
 
 
 /**
@@ -108,6 +108,7 @@ public class MosipActiveMqImpl implements MosipQueueManager<MosipQueue, byte[]> 
      * lang.Object, java.lang.Object, java.lang.String, long)
      */
     @Override
+	@SuppressWarnings({ "java:S2095" })
     public Boolean send(MosipQueue mosipQueue, byte[] message, String address, int messageTTL) {
         regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.USERID.toString(),
                 "", "MosipActiveMqImpl::send()::entry");
@@ -144,6 +145,7 @@ public class MosipActiveMqImpl implements MosipQueueManager<MosipQueue, byte[]> 
     }
 
     @Override
+	@SuppressWarnings({ "java:S2095" })
     public Boolean send(MosipQueue mosipQueue, String message, String address, int messageTTL) {
         boolean flag = false;
         initialSetup(mosipQueue);
@@ -182,6 +184,7 @@ public class MosipActiveMqImpl implements MosipQueueManager<MosipQueue, byte[]> 
      * .lang.Object, java.lang.String)
      */
     @Override
+	@SuppressWarnings({ "java:S2095" })
     public byte[] consume(MosipQueue mosipQueue, String address, QueueListener object) {
         regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.USERID.toString(),
                 "", "MosipActiveMqImpl::consume()::entry");

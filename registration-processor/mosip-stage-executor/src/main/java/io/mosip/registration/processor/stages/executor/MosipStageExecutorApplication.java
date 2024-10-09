@@ -13,6 +13,7 @@ import org.springframework.core.env.MutablePropertySources;
 
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.registration.processor.core.abstractverticle.MosipVerticleAPIManager;
+
 import io.mosip.registration.processor.stages.executor.config.StagesConfig;
 import io.mosip.registration.processor.stages.executor.util.StageClassesUtil;
 
@@ -71,7 +72,7 @@ public class MosipStageExecutorApplication {
 									ExceptionUtils.getStackTrace(e));
 						}
 					}));
-					executorService.shutdown();
+					executorService.close();
 				} else {
 					regProcLogger.error("No stage class is found. Please make sure correct correct stage class base packages are specified in properties and stages are added to classpath/dependencies.");
 				}
