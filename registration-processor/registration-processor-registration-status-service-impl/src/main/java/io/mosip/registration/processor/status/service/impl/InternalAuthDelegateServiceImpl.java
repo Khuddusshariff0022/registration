@@ -94,7 +94,7 @@ public class InternalAuthDelegateServiceImpl implements InternalAuthDelegateServ
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(internalAuthUri);
 
 		HttpEntity<?> httpRequestEntity = new HttpEntity<Object>(authRequestDTO, headers);
-        System.out.println("==> "+ httpRequestEntity);
+        System.out.println("==> "+new ObjectMapper().writeValueAsString(httpRequestEntity) );
 		return postApi(builder.toUriString(), MediaType.APPLICATION_JSON, httpRequestEntity, AuthResponseDTO.class)
 				.getBody();
 	}
