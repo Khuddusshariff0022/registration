@@ -2,9 +2,16 @@ package io.mosip.registration.processor.stages.validator.impl;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import io.mosip.registration.processor.core.packet.dto.packetmanager.CreatePacketRequestDto;
+import io.mosip.registration.processor.packet.manager.idreposervice.IdRepoService;
+import io.mosip.registration.processor.packet.storage.utils.IdSchemaUtil;
+import io.mosip.registration.processor.stages.packet.validator.PacketValidateProcessor;
+import io.mosip.registration.processor.status.dto.InternalRegistrationStatusDto;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -80,6 +87,15 @@ public class PacketValidatorImpl implements PacketValidator {
 	@Autowired
 	private ApplicantDocumentValidation applicantDocumentValidation;
 
+    @Autowired
+    private PacketValidateProcessor packetValidateProcessor;
+
+    @Autowired
+    private IdRepoService idRepoService;
+
+    @Autowired
+    private IdSchemaUtil idSchemaUtils;
+
 	@Override
 	public boolean validate(String id, String process, PacketValidationDto packetValidationDto)
 			throws ApisResourceAccessException, RegistrationProcessorCheckedException, IOException,
@@ -118,10 +134,15 @@ public class PacketValidatorImpl implements PacketValidator {
 					|| process.equalsIgnoreCase(RegistrationType.RES_UPDATE.toString())) {
 				uin = utility.getUIn(id, process, ProviderStageName.PACKET_VALIDATOR);
 				if (uin == null) {
-					regProcLogger.error(LoggerFileConstant.SESSIONID.toString(),
-							LoggerFileConstant.REGISTRATIONID.toString(), id,
-							"ERROR =======>" + PlatformErrorMessages.RPR_PVM_INVALID_UIN.getMessage());
-					throw new IdRepoAppException(PlatformErrorMessages.RPR_PVM_INVALID_UIN.getMessage());
+                    uin=getUinByHandle(id,process);
+                    createAndUpload(id,process);
+
+                    if (uin == null) {
+                        regProcLogger.error(LoggerFileConstant.SESSIONID.toString(),
+                                LoggerFileConstant.REGISTRATIONID.toString(), id,
+                                "ERROR =======>" + PlatformErrorMessages.RPR_PVM_INVALID_UIN.getMessage());
+                        throw new IdRepoAppException(PlatformErrorMessages.RPR_PVM_INVALID_UIN.getMessage());
+                    }
 				}
 				JSONObject jsonObject = utililites.retrieveIdrepoJson(uin);
 				if (jsonObject == null) {
@@ -297,6 +318,65 @@ public class PacketValidatorImpl implements PacketValidator {
 		return true;
 
 	}
+
+    private boolean createAndUpload(String id,String process) throws PacketManagerException, ApisResourceAccessException, IOException, JsonProcessingException, JSONException {
+        Map<String,String > metaInfo=packetManagerService.getMetaInfo(id,process,ProviderStageName.CMD_VALIDATOR);
+        String uin=getUinByHandle(id,process);
+        if (uin!=null && !uin.isEmpty())
+        {
+            String audit="[\n" +
+                    "\t\t\t{\n" +
+                    "\t\t\t\t\"Audit1\": \"Regclient1\",\n" +
+                    "\t\t\t\t\"Audit2\": \"Regclient2\",\n" +
+                    "\t\t\t\t\"Audit3\": \"Regclient3\"\n" +
+                    "\t\t\t}\n" +
+                    "\t\t]";
+            Map<String, String> feild=new HashMap<>();
+
+            feild.put("UIN",uin);
+            String schemaVersion=packetManagerService.getField(id,"IDSchemaVersion",process,ProviderStageName.PACKET_VALIDATOR);
+            String schemaJson=idSchemaUtils.getIdSchema(Double.valueOf(schemaVersion));
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Map<String, String>> metaDataList = objectMapper.readValue(metaInfo.get("metaData"), new TypeReference<List<Map<String, String>>>() {});
+            // Create a Map<String, String> from the parsed data
+            Map<String, String> metadata = new HashMap<>();
+            for (Map<String, String> item : metaDataList) {
+                metadata.put(item.get("label"), item.get("value"));
+            }
+            String centerId = metaDataList.stream().filter(entry -> "centerId".equals(entry.get("label"))).map(entry -> entry.get("value")).findFirst().orElse(null);
+            String machineId = metaDataList.stream().filter(entry -> "machineId".equals(entry.get("label"))).map(entry -> entry.get("value")).findFirst().orElse(null);
+            String refId=centerId.concat("_").concat(machineId);
+            CreatePacketRequestDto createPacketRequestDto=new CreatePacketRequestDto();
+            createPacketRequestDto.setAudits( objectMapper.readValue(audit, new TypeReference<List<Map<String, String>>>() {}));
+            createPacketRequestDto.setFields(feild);
+            createPacketRequestDto.setRefId(refId);
+            createPacketRequestDto.setMetaInfo(metadata);
+            createPacketRequestDto.setSchemaVersion(schemaVersion);
+            createPacketRequestDto.setSchemaJson(schemaJson);
+            createPacketRequestDto.setSource("REGISTRATION_CLIENT");
+            createPacketRequestDto.setProcess("BIOMETRIC_CORRECTION");
+            createPacketRequestDto.setId(id);
+
+            packetManagerService.createPacket(createPacketRequestDto,id);
+
+        }
+        return true;
+    }
+
+    public String getUinByHandle(String id, String process) throws PacketManagerException, ApisResourceAccessException, IOException, JsonProcessingException {
+        String selectedHandle = packetManagerService.getField(id, MappingJsonConstants.SELECTEDHANDELS, process, ProviderStageName.CMD_VALIDATOR);
+        if (selectedHandle != null) {
+            selectedHandle = selectedHandle.replace("[", "").replace("]", "").replace("\"", "").trim();
+            List<String> list = Arrays.asList(selectedHandle.split(",\\s*"));
+            String handle = list.getFirst();
+            regProcLogger.info(handle);
+            String handleId = packetManagerService.getField(id, handle, process, ProviderStageName.CMD_VALIDATOR);
+            handleId += "@" + handle.toLowerCase();
+            String uin=idRepoService.getUinByHandel(handleId, utililites.getGetRegProcessorDemographicIdentity());
+            return uin;
+        }
+        return null;
+    }
 	
 	
 

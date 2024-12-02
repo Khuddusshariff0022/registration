@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.mosip.registration.processor.core.packet.dto.packetmanager.CreatePacketRequestDto;
 import org.assertj.core.util.Lists;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -339,4 +340,9 @@ public class PriorityBasedPacketManagerService {
         }
         return null;
     }
+
+    public void createPacket(CreatePacketRequestDto request, String id) throws ApisResourceAccessException, JsonProcessingException, PacketManagerException {
+        Map<String, String> res=packetManagerService.createPacket(request, id);
+    }
+
 }

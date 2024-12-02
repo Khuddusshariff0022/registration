@@ -2,8 +2,11 @@ package io.mosip.registration.processor.packet.manager.idreposervice.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -194,4 +197,25 @@ public class IdRepoServiceImpl implements IdRepoService {
 
 		return responseDTO;
 	}
+@Override
+    public String getUinByHandel(String handleId,String regProcessorDemographicIdentity) throws ApisResourceAccessException, IOException {
+        Map<String,String> map=new HashMap<>();
+        map.put("id",handleId);
+        map.put("type","");
+        map.put("idType","handle");
+        String request=mapper.writeValueAsString(map);
+
+    Object jsonObject = mapper.readValue(request, Object.class);
+        ResponseWrapper<IdResponseDTO> response=(ResponseWrapper<IdResponseDTO>) restClientService.postApi(ApiName.IDREPOGETUINBYHANDEL, null, null, jsonObject,
+                ResponseWrapper.class);
+
+        if (response.getResponse() != null) {
+            //Gson gsonObj = new Gson();
+            String jsonString =mapper.writeValueAsString(response.getResponse());//gsonObj.toJson(response.getResponse());
+            JSONObject identityJson = JsonUtil.objectMapperReadValue(jsonString, JSONObject.class);
+            JSONObject demographicIdentity = JsonUtil.getJSONObject(identityJson, regProcessorDemographicIdentity);
+            return JsonUtil.getJSONValue(demographicIdentity, AbisConstant.UIN);
+        }
+        return null;
+    }
 }

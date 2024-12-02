@@ -112,6 +112,7 @@ public class IdrepoDraftService {
             requestDto.setUin(responseDTO.getUin());
             idRequestDto.setRequest(requestDto);
         }
+
         IdResponseDTO response = (IdResponseDTO) registrationProcessorRestClientService.patchApi(
                     ApiName.IDREPOUPDATEDRAFT, Lists.newArrayList(id), null, null, idRequestDto, IdResponseDTO.class);
             if (response.getErrors() != null && !response.getErrors().isEmpty()) {

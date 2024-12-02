@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.registration.processor.core.packet.dto.packetmanager.CreatePacketRequestDto;
+import io.mosip.registration.processor.core.packet.dto.packetmanager.CreatePacketResponseDto;
 import jakarta.annotation.PostConstruct;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
 import io.mosip.registration.processor.core.packet.dto.packetmanager.TagRequestDto;
 import io.mosip.registration.processor.core.packet.dto.packetmanager.TagResponseDto;
 import io.mosip.registration.processor.packet.storage.exception.ObjectDoesnotExistsException;
@@ -367,5 +368,35 @@ public class PacketManagerService {
         }
 
         return tagResponseDto != null ? tagResponseDto.getTags() : null;
+    }
+
+    public Map<String ,String > createPacket(CreatePacketRequestDto req, String id) throws ApisResourceAccessException, JsonProcessingException, PacketManagerException {
+        RequestWrapper<CreatePacketRequestDto> request = new RequestWrapper<>();
+        request.setId(ID);
+        request.setVersion(VERSION);
+        request.setMetadata(null);
+        request.setRequesttime(DateUtils.getUTCCurrentDateTime());
+        request.setRequest(req);
+        List<String> pathsegment = new ArrayList<>();
+        ResponseWrapper<CreatePacketResponseDto> response = (ResponseWrapper<CreatePacketResponseDto>) restApi
+                .putApi(ApiName.PACKETMANAGER_CREATE_PACKET, pathsegment, "", "",
+                        request, ResponseWrapper.class, null);
+
+        if (response.getErrors() != null && response.getErrors().size() > 0) {
+            ErrorDTO error = response.getErrors().get(0);
+            regProcLogger.error(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
+                    id, JsonUtils.javaObjectToJsonString(response));
+            if (error.getErrorCode().equalsIgnoreCase("KER-PUT-024"))
+                return null;
+            else {
+                ErrorDTO errorDTO = response.getErrors().iterator().next();
+                if (OBJECT_DOESNOT_EXISTS_ERROR_CODE.equalsIgnoreCase(errorDTO.getErrorCode()))
+                    throw new ObjectDoesnotExistsException(errorDTO.getErrorCode(), errorDTO.getMessage());
+                else
+                    throw new PacketManagerException(errorDTO.getErrorCode(), errorDTO.getMessage());
+            }
+
+        }
+            return null;
     }
 }
