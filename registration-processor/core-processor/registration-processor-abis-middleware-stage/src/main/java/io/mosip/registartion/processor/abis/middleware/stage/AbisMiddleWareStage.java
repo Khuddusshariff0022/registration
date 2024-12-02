@@ -569,11 +569,6 @@ public class AbisMiddleWareStage extends MosipVerticleAPIManager {
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.USERID.toString(), "",
 				"AbisMiddlewareStage::sendToQueue()::Entry");
 		boolean isAddedToQueue;
-        regProcLogger.info(" queue  : ",queue.getQueueName());
-        regProcLogger.info(" abisReqTextString  : ",abisReqTextString);
-        regProcLogger.info(" abisQueueAddress  : ",abisQueueAddress);
-        regProcLogger.info(" messageTTL  : ",messageTTL);
-
 		try {
 			if (messageFormat.equalsIgnoreCase(TEXT_MESSAGE))
 				isAddedToQueue = mosipQueueManager.send(queue, abisReqTextString,
@@ -599,7 +594,6 @@ public class AbisMiddleWareStage extends MosipVerticleAPIManager {
 	private void updateAbisRequest(boolean isAddedToQueue, AbisRequestDto abisRequestDto,
 			InternalRegistrationStatusDto internalRegDto) {
 		AbisRequestEntity abisReqEntity = convertAbisRequestDtoToAbisRequestEntity(abisRequestDto);
-
 		if (isAddedToQueue) {
 
 			abisReqEntity.setStatusCode(AbisStatusCode.SENT.toString());
