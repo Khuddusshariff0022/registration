@@ -594,6 +594,7 @@ public class AbisMiddleWareStage extends MosipVerticleAPIManager {
 	private void updateAbisRequest(boolean isAddedToQueue, AbisRequestDto abisRequestDto,
 			InternalRegistrationStatusDto internalRegDto) {
 		AbisRequestEntity abisReqEntity = convertAbisRequestDtoToAbisRequestEntity(abisRequestDto);
+
 		if (isAddedToQueue) {
 
 			abisReqEntity.setStatusCode(AbisStatusCode.SENT.toString());

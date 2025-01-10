@@ -135,7 +135,7 @@ public class PacketValidatorImpl implements PacketValidator {
 				uin = utility.getUIn(id, process, ProviderStageName.PACKET_VALIDATOR);
 				if (uin == null) {
                     uin=getUinByHandle(id,process);
-                    createAndUpload(id,process);
+                    createAndUpload(id,process,uin);
 
                     if (uin == null) {
                         regProcLogger.error(LoggerFileConstant.SESSIONID.toString(),
@@ -319,9 +319,8 @@ public class PacketValidatorImpl implements PacketValidator {
 
 	}
 
-    private boolean createAndUpload(String id,String process) throws PacketManagerException, ApisResourceAccessException, IOException, JsonProcessingException, JSONException {
+    private boolean createAndUpload(String id,String process, String uin) throws PacketManagerException, ApisResourceAccessException, IOException, JsonProcessingException, JSONException {
         Map<String,String > metaInfo=packetManagerService.getMetaInfo(id,process,ProviderStageName.CMD_VALIDATOR);
-        String uin=getUinByHandle(id,process);
         if (uin!=null && !uin.isEmpty())
         {
             String audit="[\n" +
