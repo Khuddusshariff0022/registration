@@ -1,13 +1,41 @@
 package io.mosip.registration.processor.packet.storage.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
-import java.util.Date;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import io.mosip.kernel.biometrics.commons.CbeffValidator;
+import io.mosip.kernel.biometrics.constant.BiometricType;
+import io.mosip.kernel.biometrics.entities.BDBInfo;
+import io.mosip.kernel.biometrics.entities.BIR;
+import io.mosip.kernel.biometrics.entities.BIRInfo;
+import io.mosip.kernel.biometrics.entities.BiometricRecord;
+import io.mosip.kernel.core.bioapi.exception.BiometricException;
+import io.mosip.registration.processor.core.idrepo.dto.IdResponseDTO;
+import io.mosip.registration.processor.core.idrepo.dto.ResponseDTO;
+import io.mosip.registration.processor.packet.manager.idreposervice.IdRepoService;
+import io.mosip.registration.processor.packet.storage.repository.BasePacketRepository;
+import io.mosip.registration.processor.status.dto.InternalRegistrationStatusDto;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.assertj.core.util.Lists;
+import org.joda.time.DateTime;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +66,12 @@ import lombok.Data;
 public class Utility {
 
 	private static Logger regProcLogger = RegProcessorLogger.getLogger(Utility.class);
+    public static final String EXCEPTION = "EXCEPTION";
+    public static final String TRUE = "TRUE";
+    public static final String DATEOFBIRTH="dateOfBirth";
+
+    /** The Constant UIN. */
+    private static final String UIN = "UIN";
 
 	@Autowired
 	private PriorityBasedPacketManagerService packetManagerService;
@@ -45,9 +79,37 @@ public class Utility {
 	@Autowired
 	private Utilities utilities;
 
+    @Autowired
+    private IdRepoService idRepoService;
+
+    @Autowired
+    private BasePacketRepository basePacketRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+
+
 	/** The dob format. */
 	@Value("${registration.processor.applicant.dob.format}")
 	private String dobFormat;
+
+    @Value("${mosip.bio-deduped.max_age_limit:100}")
+    private int MaxAgeLimit;
+
+    @Value("${mosip.bio-deduped.min_age_limit:0}")
+    private int MinAgeLimit;
+
+    @Value("${registration.processor.identityjson}")
+    private String getRegProcessorIdentityJson;
+
+
+    /** The get reg processor demographic identity. */
+    @Value("${registration.processor.demographic.identity}")
+    private String getRegProcessorDemographicIdentity;
+
+    @Value("${mosip.kernel.applicant.type.age.limit}")
+    private String ageLimit;
 
 	private static final String VALUE = "value";
 
@@ -160,4 +222,163 @@ public class Utility {
 		return UIN;
 
 	}
+
+    // Infant Age limit taken from config.
+    public boolean isApplicantWasInfant(InternalRegistrationStatusDto registrationStatusDto) throws Exception {
+//        Fetching the packet created date and time
+        Date packetrCeatedDate=parseDate(getPacketcreatedDateAndtimesFromIdrepo(registrationStatusDto));
+        if (packetrCeatedDate==null){
+            packetrCeatedDate=parseDate(getPacketCreationDateTimeFromRegList(registrationStatusDto.getRegistrationId()));
+            if (packetrCeatedDate==null) {
+                packetrCeatedDate=parseDate(getPacketCreatedDateTimeFromRid(registrationStatusDto.getRegistrationId()));
+            }
+        }
+        Date dobOfApplicant=parseDate(getDateOfBirthFromIdrepo(registrationStatusDto));
+        int age=calculateAgeAtTheTimeOfRegistration(dobOfApplicant,packetrCeatedDate);
+        int ageThreshold = Integer.parseInt(ageLimit);
+        return age < ageThreshold;
+    }
+
+
+    /**    get packet created date and time from idrepo */
+    public String getPacketcreatedDateAndtimesFromIdrepo(InternalRegistrationStatusDto registrationStatusDao) throws PacketManagerException, ApisResourceAccessException, IOException, JsonProcessingException {
+        regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
+                "Utilities::getPacketcreatedDateAndtimesFromIdrepo()::entry");
+        /**        getting Uin from packetmanager from update packet */
+        String uin=packetManagerService.getField(registrationStatusDao.getRegistrationId(),UIN,registrationStatusDao.getRegistrationType(),ProviderStageName.BIO_DEDUPE);
+/**        get created date and time from idrepo using above UIN */
+        regProcLogger.debug("Uin = ",uin);
+        String HCstring="1919-02-17T07:20:46.407Z";
+        String[] str=HCstring.split("T");
+        return str[0].replace("-","/");
+
+
+    }
+
+
+    public String getDateOfBirthFromIdrepo(InternalRegistrationStatusDto internalRegistrationStatusDto) throws IOException, ApisResourceAccessException, PacketManagerException, JsonProcessingException {
+        regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
+                "Utilities::getDateOfDirthFromIdrepo()::entry");
+        String uin=packetManagerService.getField(internalRegistrationStatusDto.getRegistrationId(),MappingJsonConstants.UIN,internalRegistrationStatusDto.getRegistrationType(),ProviderStageName.BIO_DEDUPE);
+        JSONObject responseDTO= idRepoService.getIdJsonFromIDRepo(uin,getGetRegProcessorDemographicIdentity());
+        if (responseDTO != null) {
+            return JsonUtil.getJSONValue(responseDTO,DATEOFBIRTH );
+        }
+        return "";
+    }
+
+    public Date parseDate(String dateStr) {
+
+        try {
+            if (dateStr!=null){
+                DateFormat sdf = new SimpleDateFormat(dobFormat);
+                if(!dateStr.contains("/")) {
+                    dateStr=getDateFromatedString(dateStr);
+                }
+
+                sdf.setLenient(false);
+                Date birthDate = sdf.parse(dateStr);
+                return birthDate;
+            }
+        }catch (Exception e){
+            regProcLogger.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+        return null;
+    }
+
+    public String getDateFromatedString(String dt) throws ParseException {
+            DateFormat sdf = new SimpleDateFormat(dobFormat);
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+            Date date = inputFormat.parse(dt);
+            return sdf.format(date);
+    }
+
+
+    //Minimum and Maximum age needs to be fetched from Properties
+    public int calculateAgeAtTheTimeOfRegistration(Date dob, Date registeredDate) throws Exception {
+
+        regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(), "",
+                "Utilities::calculateAgeAtTheTimeOfRegistration():: entry");
+        int age=0;
+        Calendar dobCalendar = Calendar.getInstance();
+        dobCalendar.setTime(dob);
+
+        Calendar registeredCalendar = Calendar.getInstance();
+        registeredCalendar.setTime(registeredDate);
+        age = registeredCalendar.get(Calendar.YEAR) - dobCalendar.get(Calendar.YEAR);
+
+        if (age < MinAgeLimit && age > MaxAgeLimit ) {
+            throw new IOException(PlatformErrorMessages.RPR_PDS_AGE_INVALID_EXCEPTION.getMessage());
+        }
+
+        return age;
+    }
+
+    public String getPacketCreationDateTimeFromRegList(String rid)
+    {
+        String packetId=basePacketRepository.getPacketIdfromRegprcList(rid);
+        if (packetId!=null){
+            packetId=packetId.substring(Math.max(0, packetId.length() - 14));
+        }
+        return packetId;
+    }
+    public String getPacketCreatedDateTimeFromRid(String rid) {
+        if (rid != null) {
+            return rid.substring(Math.max(0, rid.length() - 14));
+        }
+        return null;
+    }
+
+    public BiometricRecord getBiometricRecordfromIdrepo(String uin) throws Exception {
+        ResponseDTO responseFromIDRepo =idRepoService.getIdResponseFromIDRepo(uin);
+        String doc = responseFromIDRepo.getDocuments().get(0).getValue();
+        byte[] bi=Base64.getUrlDecoder().decode(doc);
+        if (bi == null)
+            return null;
+        BIR birs = CbeffValidator.getBIRFromXML(bi);
+        BiometricRecord biometricRecord = new BiometricRecord();
+        BDBInfo bdbInfo=new BDBInfo();
+            biometricRecord.setSegments(birs.getBirs());
+        return biometricRecord;
+    }
+
+
+    public boolean isALLBiometricHaveExceptoin(List<BIR> birs) throws PacketManagerException, IOException, ApisResourceAccessException, JsonProcessingException , BiometricException {
+        boolean exceptionValue = true;
+        // setting biometricNotAvailableTagValue for each modality in case biometrics are not available (need to confirm the exception)
+        if (birs == null) {
+            throw new BiometricException(PlatformErrorMessages.UNABLE_TO_FETCH_BIO_INFO.getCode(), PlatformErrorMessages.UNABLE_TO_FETCH_BIO_INFO.getMessage());
+        }
+        if (isBiometricHavingOthers(birs)) {
+            // get individual biometrics file name from id.json
+            for (BIR bir : birs) {
+
+                if (!(bir.getBdbInfo().getType().get(0) == BiometricType.FACE || bir.getBdbInfo().getType().get(0) == BiometricType.EXCEPTION_PHOTO)) {
+                    if (bir.getOthers() != null && bir.getOthers().get(EXCEPTION).equals(false)) {
+                            return true;
+                    }
+                }
+            }
+        }else {
+            for (BIR bir:birs)
+            {
+                return !(bir.getBdbInfo().getType().get(0) == BiometricType.FACE || bir.getBdbInfo().getType().get(0) == BiometricType.EXCEPTION_PHOTO);
+            }
+        }
+        return exceptionValue;
+    }
+
+//    checking Biometric genrated using new or old version
+    public boolean isBiometricHavingOthers(List<BIR> bir){
+        return bir.stream()
+                .anyMatch(bi -> bi.getOthers() != null && !bi.getOthers().isEmpty());
+    }
+
+    //    checking is ALL biometric is with exception
+    public boolean isBioWithException(InternalRegistrationStatusDto registrationStatusDto) throws Exception {
+    String uin=packetManagerService.getField(registrationStatusDto.getRegistrationId(),MappingJsonConstants.UIN,registrationStatusDto.getRegistrationType(),ProviderStageName.BIO_DEDUPE);
+    BiometricRecord bm=getBiometricRecordfromIdrepo(uin);
+    return isALLBiometricHaveExceptoin(bm.getSegments());
+    }
 }

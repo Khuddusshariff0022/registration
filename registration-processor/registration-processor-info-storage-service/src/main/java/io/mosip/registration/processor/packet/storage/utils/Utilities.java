@@ -8,13 +8,17 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import io.mosip.kernel.biometrics.entities.BIR;
+import io.mosip.kernel.biometrics.entities.BiometricRecord;
+import io.mosip.kernel.core.bioapi.exception.BiometricException;
+import io.mosip.registration.processor.core.idrepo.dto.Documents;
+import io.mosip.registration.processor.core.idrepo.dto.IdResponseDTO;
+import io.mosip.registration.processor.packet.storage.entity.BasePacketEntity;
+import io.mosip.registration.processor.packet.storage.repository.BasePacketRepository;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -79,6 +83,8 @@ public class Utilities {
 	private static final String SOURCE = "source";
 	private static final String PROCESS = "process";
 	private static final String PROVIDER = "provider";
+    public static final String EXCEPTION = "EXCEPTION";
+    public static final String TRUE = "TRUE";
 
 	private static Map<String, String> readerConfiguration;
 	private static Map<String, String> writerConfiguration;
@@ -103,6 +109,12 @@ public class Utilities {
 
 	@Value("${mosip.kernel.registrationcenterid.length}")
 	private int centerIdLength;
+
+    @Value("${mosip.bio-deduped.max_age_limit:100}")
+    private int MaxAgeLimit;
+
+    @Value("${mosip.bio-deduped.min_age_limit:0}")
+    private int MinAgeLimit;
 
 	@Autowired
 	private ObjectMapper objMapper;
@@ -160,6 +172,12 @@ public class Utilities {
 	@Autowired
 	private RegistrationStatusDao registrationStatusDao;
 
+
+
+
+    @Autowired
+    private PacketManagerService packetManagerService;
+
 	/** The Constant INBOUNDQUEUENAME. */
 	private static final String INBOUNDQUEUENAME = "inboundQueueName";
 
@@ -194,6 +212,8 @@ public class Utilities {
 	private static final String RANDOMIZE_FALSE = ")?randomize=false";
 
 	private static final String VALUE = "value";
+
+    private static final String DATEOFBIRTH = "dateOfBirth";
 
 	private JSONObject mappingJsonObject = null;
 
@@ -373,7 +393,7 @@ public class Utilities {
 	 * @throws IOException                 Signals that an I/O exception has
 	 *                                     occurred.
 	 */
-	public List<io.mosip.registration.processor.core.idrepo.dto.Documents> retrieveIdrepoDocument(String uin)
+	public List<Documents> retrieveIdrepoDocument(String uin)
 			throws ApisResourceAccessException {
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
 				"Utilities::retrieveIdrepoDocument()::entry");
@@ -736,5 +756,4 @@ public class Utilities {
 		String machineId = id.substring(centerIdLength, centerIdLength + machineIdLength);
 		return centerId + "_" + machineId;
 	}
-
 }

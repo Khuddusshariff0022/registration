@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.mosip.registration.processor.core.packet.dto.abis.UniqueRegIdsMethodResponse;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -540,8 +541,10 @@ public class DemodedupeProcessorTest {
 		Mockito.when(registrationStatusDao.find(any(),any(),any(),any())).thenReturn(entity);
 		Mockito.when(packetInfoManager.getAbisResponseRecords(anyString(), anyString())).thenReturn(abisResponseDtos);
 		Mockito.when(packetInfoManager.getAbisResponseDetRecordsList(any())).thenReturn(abisResponseDetDtos);
+        UniqueRegIdsMethodResponse uniqueRegIdsMethodResponse=new UniqueRegIdsMethodResponse();
+        uniqueRegIdsMethodResponse.setResponse(matchedRegIds);
 		Mockito.when(abisHandlerUtil.getUniqueRegIds(anyString(), anyString(), anyInt(), any(), any()))
-				.thenReturn(matchedRegIds);
+				.thenReturn(uniqueRegIdsMethodResponse);
 		doNothing().when(packetInfoManager).saveManualAdjudicationData(anySet(), any(), any(), any(), any(),any(),any());
 		Mockito.when(utility.getApplicantAge(anyString(), anyString(), any())).thenReturn(20);
 		MessageDTO messageDto = demodedupeProcessor.process(dto, stageName);
@@ -580,8 +583,10 @@ public class DemodedupeProcessorTest {
 		Mockito.when(registrationStatusDao.find(any(),any(),any(),any())).thenReturn(entity);
 		Mockito.when(packetInfoManager.getAbisResponseRecords(anyString(), anyString())).thenReturn(abisResponseDtos);
 		Mockito.when(packetInfoManager.getAbisResponseDetRecordsList(any())).thenReturn(abisResponseDetDtos);
-		Mockito.when(abisHandlerUtil.getUniqueRegIds(anyString(), anyString(), anyInt(), any(), any()))
-				.thenReturn(matchedRegIds);
+        UniqueRegIdsMethodResponse uniqueRegIdsMethodResponse=new UniqueRegIdsMethodResponse();
+        uniqueRegIdsMethodResponse.setResponse(matchedRegIds);
+        Mockito.when(abisHandlerUtil.getUniqueRegIds(anyString(), anyString(), anyInt(), any(), any()))
+                .thenReturn(uniqueRegIdsMethodResponse);
 		doNothing().when(packetInfoManager).saveManualAdjudicationData(anySet(), any(), any(), any(), any(),any(),any());
 		Mockito.when(utility.getApplicantAge(anyString(), anyString(), any())).thenReturn(20);
 		MessageDTO messageDto = demodedupeProcessor.process(dto, stageName);
@@ -615,8 +620,10 @@ public class DemodedupeProcessorTest {
 		Mockito.when(registrationStatusDao.find(any(),any(),any(),any())).thenReturn(entity);
 		Mockito.when(packetInfoManager.getAbisResponseRecords(anyString(), anyString())).thenReturn(abisResponseDtos);
 		Mockito.when(packetInfoManager.getAbisResponseDetRecordsList(any())).thenReturn(abisResponseDetDtos);
-		Mockito.when(abisHandlerUtil.getUniqueRegIds(anyString(), anyString(), anyInt(), any(), any()))
-				.thenReturn(matchedRegIds);
+        UniqueRegIdsMethodResponse uniqueRegIdsMethodResponse=new UniqueRegIdsMethodResponse();
+        uniqueRegIdsMethodResponse.setResponse(matchedRegIds);
+        Mockito.when(abisHandlerUtil.getUniqueRegIds(anyString(), anyString(), anyInt(), any(), any()))
+                .thenReturn(uniqueRegIdsMethodResponse);
 		doNothing().when(packetInfoManager).saveManualAdjudicationData(anySet(), any(), any(), any(), any(),any(),any());
 		Mockito.when(utility.getApplicantAge(anyString(), anyString(), any())).thenReturn(20);
 		MessageDTO messageDto = demodedupeProcessor.process(dto, stageName);

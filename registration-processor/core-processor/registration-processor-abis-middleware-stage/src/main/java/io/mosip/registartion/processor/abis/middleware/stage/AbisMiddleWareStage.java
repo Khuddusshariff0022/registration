@@ -170,27 +170,33 @@ public class AbisMiddleWareStage extends MosipVerticleAPIManager {
 		try {
 			mosipEventBus = this.getEventBus(this, clusterManagerUrl, workerPoolSize);
 			this.consume(mosipEventBus, MessageBusAddress.ABIS_MIDDLEWARE_BUS_IN, messageExpiryTimeLimit);
-			abisQueueDetails = utility.getAbisQueueDetails();
-			for (AbisQueueDetails abisQueue : abisQueueDetails) {
-				String abisInBoundaddress = abisQueue.getInboundQueueName();
-				int inboundMessageTTL = abisQueue.getInboundMessageTTL();
-				MosipQueue queue = abisQueue.getMosipQueue();
-				QueueListener listener = new QueueListener() {
-					@Override
-					public void setListener(Message message) {
-						try {
-							consumerListener(message, abisInBoundaddress, queue, mosipEventBus,
-								inboundMessageTTL);
-						} catch (Exception e) {
+//			abisQueueDetails = utility.getAbisQueueDetails();
+//			for (AbisQueueDetails abisQueue : abisQueueDetails) {
+//				String abisInBoundaddress = abisQueue.getInboundQueueName();
+//				int inboundMessageTTL = abisQueue.getInboundMessageTTL();
+//				MosipQueue queue = abisQueue.getMosipQueue();
+//				QueueListener listener = new QueueListener() {
+//					@Override
+//					public void setListener(Message message) {
+//						try {
+//							consumerListener(message, abisInBoundaddress, queue, mosipEventBus,
+//								inboundMessageTTL);
+//						} catch (Exception e) {
+//
+//							regProcLogger.error(LoggerFileConstant.SESSIONID.toString(),
+//									LoggerFileConstant.REGISTRATIONID.toString(), "", ExceptionUtils.getStackTrace(e));
+//
+//						}
+//					}
+//				};
+//				mosipQueueManager.consume(queue, abisQueue.getOutboundQueueName(), listener);
+//			}
 
-							regProcLogger.error(LoggerFileConstant.SESSIONID.toString(),
-									LoggerFileConstant.REGISTRATIONID.toString(), "", ExceptionUtils.getStackTrace(e));
-
-						}
-					}
-				};
-				mosipQueueManager.consume(queue, abisQueue.getOutboundQueueName(), listener);
-			}
+            MessageDTO messageDTO=new MessageDTO();
+            messageDTO.setWorkflowInstanceId("c8571710-ae4f-431a-9ab8-6b2143b22823");
+            messageDTO.setReg_type("UPDATE");
+            messageDTO.setRid("10011110090001120250211183343");
+            process(messageDTO);
 
 		} catch (Exception e) {
 			regProcLogger.error(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
