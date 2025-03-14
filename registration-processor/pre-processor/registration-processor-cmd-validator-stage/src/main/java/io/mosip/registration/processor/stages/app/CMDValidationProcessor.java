@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+
+import io.mosip.kernel.core.util.CryptoUtil;
+import io.mosip.registration.processor.packet.storage.dto.Document;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -127,6 +130,13 @@ public class CMDValidationProcessor {
 			Map<String, String> metaInfo = packetManagerService.getMetaInfo(registrationId,
 					registrationStatusDto.getRegistrationType(), ProviderStageName.CMD_VALIDATOR);
 
+			String introduserToken=packetManagerService.getField(registrationId,"introducerValidationToken",registrationStatusDto.getRegistrationType(), ProviderStageName.CMD_VALIDATOR);
+			regProcLogger.info("Introduces Token === ",introduserToken);
+			Document document=packetManagerService.getDocument(registrationId,"introducerValidationTokenDetails",registrationStatusDto.getRegistrationType(), ProviderStageName.CMD_VALIDATOR);
+			if(document!=null)
+			{
+				regProcLogger.info("Token Details",new String(document.getDocument()));
+			}
 			RegOsiDto regOsi = osiUtils.getOSIDetailsFromMetaInfo(metaInfo);
 
 			if ((gpsEnable.equalsIgnoreCase(GLOBAL_CONFIG_TRUE_VALUE))
