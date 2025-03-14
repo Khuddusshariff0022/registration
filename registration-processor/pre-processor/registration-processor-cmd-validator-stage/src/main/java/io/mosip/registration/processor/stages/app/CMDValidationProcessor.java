@@ -131,11 +131,11 @@ public class CMDValidationProcessor {
 					registrationStatusDto.getRegistrationType(), ProviderStageName.CMD_VALIDATOR);
 
 			String introduserToken=packetManagerService.getField(registrationId,"introducerValidationToken",registrationStatusDto.getRegistrationType(), ProviderStageName.CMD_VALIDATOR);
-			regProcLogger.info("Introduces Token === ",introduserToken);
+			regProcLogger.info("Introduces Token === {}",introduserToken);
 			Document document=packetManagerService.getDocument(registrationId,"introducerValidationTokenDetails",registrationStatusDto.getRegistrationType(), ProviderStageName.CMD_VALIDATOR);
 			if(document!=null)
 			{
-				regProcLogger.info("Token Details",new String(document.getDocument()));
+				regProcLogger.info("Token Details === {}",new String(document.getDocument()));
 			}
 			RegOsiDto regOsi = osiUtils.getOSIDetailsFromMetaInfo(metaInfo);
 
