@@ -459,7 +459,7 @@ public class NotificationServiceImpl implements NotificationService {
 	 */
 	private void setTemplateAndSubject(NotificationTemplateType templatetype, String regType,
 			MessageSenderDto messageSenderDto) {
-		String internalProcess= utilities.getInternalProcess(additionalProcessCategoryForNotification, regtype);
+		String internalProcess= utilities.getInternalProcess(additionalProcessCategoryForNotification, regType);
 		switch (templatetype) {
 		case LOST_UIN:
 			messageSenderDto.setSmsTemplateCode(env.getProperty(LOST_UIN+SMS));
