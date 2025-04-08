@@ -12,8 +12,25 @@
 				{
 					"name": "New Request",
 					"request": {
-						"method": "GET",
-						"header": []
+						"auth": {
+							"type": "apikey",
+							"apikey": {
+								"value": "Authorization={{Token}}",
+								"key": "Cookie"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"mosip.registration.processor.workflow.instance\",\r\n    \"requesttime\": \"2025-03-04T08:29:39.276Z\",\r\n    \"version\": \"v1\",\r\n    \"request\": {\r\n        \"registrationId\": \"{{regId}}\",\r\n        \"process\": \"{{reg-type}}\",\r\n        \"source\": \"{{source}}\",\r\n        \"additionalInfoReqId\": \"\",\r\n        \"notificationInfo\": {\r\n        \"name\": \"{{email}}\",\r\n        \"phone\": \"{{phome}}\",\r\n        \"email\": \"{{email}}\"\r\n        }\r\n   }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/registrationprocessor/v1/workflowmanager/workflowinstance"
 					},
 					"response": []
 				}
