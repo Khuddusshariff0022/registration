@@ -1,0 +1,23 @@
+{
+	"info": {
+		"_postman_id": "922ceeef-1c71-42a2-ac40-8bf56aa3cabe",
+		"name": "regProcPostmenCollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "21896995"
+	},
+	"item": [
+		{
+			"name": "Workflow",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
