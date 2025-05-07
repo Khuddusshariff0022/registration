@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.registration.processor.core.exception.*;
 import io.mosip.registration.processor.core.util.JsonUtil;
 import io.mosip.registration.processor.packet.storage.utils.Utilities;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -42,10 +43,6 @@ import io.mosip.registration.processor.core.code.WorkflowActionCode;
 import io.mosip.registration.processor.core.code.WorkflowInternalActionCode;
 import io.mosip.registration.processor.core.constant.MappingJsonConstants;
 import io.mosip.registration.processor.core.constant.ProviderStageName;
-import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
-import io.mosip.registration.processor.core.exception.PacketManagerException;
-import io.mosip.registration.processor.core.exception.WorkflowActionException;
-import io.mosip.registration.processor.core.exception.WorkflowInternalActionException;
 import io.mosip.registration.processor.core.exception.util.PlatformErrorMessages;
 import io.mosip.registration.processor.core.exception.util.PlatformSuccessMessages;
 import io.mosip.registration.processor.core.logger.LogDescription;
@@ -311,7 +308,7 @@ public class WorkflowInternalActionVerticle extends MosipVerticleAPIManager {
 	}
 
 	private void processCompleteAsFailed(WorkflowInternalActionDTO workflowInternalActionDTO)
-			throws WorkflowActionException, ApisResourceAccessException, PacketManagerException,
+			throws WorkflowActionException, ApisResourceAccessException, PacketManagerException, PacketManagerFailureException,
 			JsonProcessingException, IOException {
 		AdditionalInfoRequestDto additionalInfoRequestDto = additionalInfoRequestService
 				.getAdditionalInfoRequestByRegIdAndProcessAndIteration(workflowInternalActionDTO.getRid(),
@@ -344,7 +341,7 @@ public class WorkflowInternalActionVerticle extends MosipVerticleAPIManager {
 	}
 
 	private void processCompleteAsRejected(WorkflowInternalActionDTO workflowInternalActionDTO)
-			throws WorkflowActionException, ApisResourceAccessException, PacketManagerException,
+			throws WorkflowActionException, ApisResourceAccessException, PacketManagerException, PacketManagerFailureException,
 			JsonProcessingException, IOException {
 		AdditionalInfoRequestDto additionalInfoRequestDto = additionalInfoRequestService
 				.getAdditionalInfoRequestByRegIdAndProcessAndIteration(workflowInternalActionDTO.getRid(),
@@ -376,7 +373,7 @@ public class WorkflowInternalActionVerticle extends MosipVerticleAPIManager {
 	}
 
 	private void processCompleteAsProcessed(WorkflowInternalActionDTO workflowInternalActionDTO)
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException,
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException,
 			WorkflowActionException {
 		AdditionalInfoRequestDto additionalInfoRequestDto = additionalInfoRequestService
 				.getAdditionalInfoRequestByRegIdAndProcessAndIteration(workflowInternalActionDTO.getRid(),
@@ -482,7 +479,7 @@ public class WorkflowInternalActionVerticle extends MosipVerticleAPIManager {
 	}
 
 	private void processRestartParentFlow(WorkflowInternalActionDTO workflowInternalActionDTO)
-			throws WorkflowActionException, ApisResourceAccessException, PacketManagerException,
+			throws WorkflowActionException, ApisResourceAccessException, PacketManagerException, PacketManagerFailureException,
 			JsonProcessingException, IOException {
 		AdditionalInfoRequestDto additionalInfoRequestDto = additionalInfoRequestService
 				.getAdditionalInfoRequestByRegIdAndProcessAndIteration(workflowInternalActionDTO.getRid(),
@@ -518,7 +515,7 @@ public class WorkflowInternalActionVerticle extends MosipVerticleAPIManager {
 	}
 
 	private void processPauseAndRequestAdditionalInfo(WorkflowInternalActionDTO workflowInternalActionDTO)
-			throws WorkflowActionException, ApisResourceAccessException, PacketManagerException,
+			throws WorkflowActionException, ApisResourceAccessException, PacketManagerException, PacketManagerFailureException,
 			JsonProcessingException, IOException {
 		AdditionalInfoRequestDto additionalInfoRequestDto = additionalInfoRequestService
 				.getAdditionalInfoRequestByRegIdAndProcessAndIteration(workflowInternalActionDTO.getRid(),

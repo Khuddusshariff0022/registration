@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import io.mosip.registration.processor.core.exception.*;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 import org.junit.Before;
@@ -57,10 +58,6 @@ import io.mosip.registration.processor.core.code.EventId;
 import io.mosip.registration.processor.core.code.EventName;
 import io.mosip.registration.processor.core.code.EventType;
 import io.mosip.registration.processor.core.code.RegistrationExceptionTypeCode;
-import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
-import io.mosip.registration.processor.core.exception.BioTypeException;
-import io.mosip.registration.processor.core.exception.PacketManagerException;
-import io.mosip.registration.processor.core.exception.ValidationFailedException;
 import io.mosip.registration.processor.core.http.ResponseWrapper;
 import io.mosip.registration.processor.core.logger.LogDescription;
 import io.mosip.registration.processor.core.packet.dto.FieldValue;
@@ -335,7 +332,7 @@ public class BiometricAuthenticationStageTest {
 	}
 
 	@Test
-	public void biometricAuthenticationSuccessTest() throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException {
+	public void biometricAuthenticationSuccessTest() throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, JsonProcessingException {
 		when(regentity.getRegistrationType()).thenReturn("UPDATE");
 		List<BIR> birTypeList = new ArrayList<>();
 		BIR birType1 = new BIR.BIRBuilder().build();
@@ -368,7 +365,7 @@ public class BiometricAuthenticationStageTest {
 	}
 	
 	@Test
-	public void biometricAuthenticationBiometricNullTest() throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException {
+	public void biometricAuthenticationBiometricNullTest() throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException, PacketManagerFailureException {
 		when(regentity.getRegistrationType()).thenReturn("UPDATE");
 
 		String individualBiometrics="{\"format\" : \"cbeff\",\"version\" : 1.0,\"value\" : \"individualBiometrics_bio_CBEFF\"}";
@@ -384,7 +381,7 @@ public class BiometricAuthenticationStageTest {
 	}
 	
 	@Test
-	public void individualBiometricAuthenticationBiometricNullTest() throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void individualBiometricAuthenticationBiometricNullTest() throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		when(regentity.getRegistrationType()).thenReturn("UPDATE");
 
 		when(packetManagerService.getBiometricsByMappingJsonKey(any(),
@@ -396,7 +393,7 @@ public class BiometricAuthenticationStageTest {
 	}
 	
 	@Test
-	public void biometricAuthenticationIndividualBiometricsValueNullTest() throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void biometricAuthenticationIndividualBiometricsValueNullTest() throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		when(regentity.getRegistrationType()).thenReturn("UPDATE");
 
 		String individualBiometrics="{\"format\" : \"cbeff\",\"version\" : 1.0,\"value\" : null}";
@@ -422,7 +419,7 @@ public class BiometricAuthenticationStageTest {
 	}
 
 	@Test
-	public void childPacketTest() throws ApisResourceAccessException, JsonProcessingException, io.mosip.kernel.core.exception.IOException, PacketManagerException, IOException {
+	public void childPacketTest() throws ApisResourceAccessException, JsonProcessingException, io.mosip.kernel.core.exception.IOException, PacketManagerException, PacketManagerFailureException, IOException {
 		when(regentity.getRegistrationType()).thenReturn("UPDATE");
 		when(utility.getApplicantAge(anyString(),anyString(), any())).thenReturn(2);
 		MessageDTO messageDto = biometricAuthenticationStage.process(dto);
@@ -442,7 +439,7 @@ public class BiometricAuthenticationStageTest {
 	}
 
 	@Test
-	public void testIOException() throws ApisResourceAccessException, IOException, PacketManagerException, io.mosip.kernel.core.exception.IOException, JsonProcessingException {
+	public void testIOException() throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, io.mosip.kernel.core.exception.IOException, JsonProcessingException {
 
 		when(utility.getApplicantAge(any(),anyString(), any())).thenThrow(new IOException("IOException"));
 		Mockito.when(registrationStatusMapperUtil
@@ -453,7 +450,7 @@ public class BiometricAuthenticationStageTest {
 	}
 
 	@Test
-	public void testApisResourceAccessException() throws ApisResourceAccessException, IOException, PacketManagerException, io.mosip.kernel.core.exception.IOException, JsonProcessingException {
+	public void testApisResourceAccessException() throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, io.mosip.kernel.core.exception.IOException, JsonProcessingException {
 
 		when(utility.getApplicantAge(anyString(),anyString(), any()))
 				.thenThrow(new ApisResourceAccessException("ApisResourceAccessException"));
@@ -465,7 +462,7 @@ public class BiometricAuthenticationStageTest {
 	}
 
 	@Test
-	public void testException() throws ApisResourceAccessException, IOException, PacketManagerException, io.mosip.kernel.core.exception.IOException, JsonProcessingException {
+	public void testException() throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, io.mosip.kernel.core.exception.IOException, JsonProcessingException {
 
 		when(utility.getApplicantAge(anyString(),anyString(), any()))
 				.thenThrow(
@@ -479,7 +476,7 @@ public class BiometricAuthenticationStageTest {
 	}
 
 	@Test
-	public void resupdatePacketTest() throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException {
+	public void resupdatePacketTest() throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, JsonProcessingException {
 		when(regentity.getRegistrationType()).thenReturn("res_update");
 		List<BIR> birTypeList = new ArrayList<>();
 		BIR birType1 = new BIR.BIRBuilder().build();
@@ -598,7 +595,7 @@ public class BiometricAuthenticationStageTest {
 	}
 
 	@Test
-	public void testJsonProcessingException() throws ApisResourceAccessException, IOException, PacketManagerException, io.mosip.kernel.core.exception.IOException, JsonProcessingException {
+	public void testJsonProcessingException() throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, io.mosip.kernel.core.exception.IOException, JsonProcessingException {
 
 		when(utility.getApplicantAge(any(),anyString(), any())).thenThrow(new JsonProcessingException("IOException"));
 		Mockito.when(registrationStatusMapperUtil
@@ -609,7 +606,7 @@ public class BiometricAuthenticationStageTest {
 	}
 
 	@Test
-	public void testPacketManagerException() throws ApisResourceAccessException, IOException, PacketManagerException, io.mosip.kernel.core.exception.IOException, JsonProcessingException {
+	public void testPacketManagerException() throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, io.mosip.kernel.core.exception.IOException, JsonProcessingException {
 
 		when(utility.getApplicantAge(any(),anyString(), any())).thenThrow(new PacketManagerException("errorcode","IOException"));
 		Mockito.when(registrationStatusMapperUtil
@@ -620,7 +617,7 @@ public class BiometricAuthenticationStageTest {
 	}
 
 	@Test
-	public void testChildPacketWithLessThanOneYear() throws ApisResourceAccessException, JsonProcessingException, io.mosip.kernel.core.exception.IOException, PacketManagerException, IOException {
+	public void testChildPacketWithLessThanOneYear() throws ApisResourceAccessException, JsonProcessingException, io.mosip.kernel.core.exception.IOException, PacketManagerException, PacketManagerFailureException, IOException {
 		when(regentity.getRegistrationType()).thenReturn("UPDATE");
 		when(utility.getApplicantAge(anyString(),anyString(), any())).thenReturn(0);
 		MessageDTO messageDto = biometricAuthenticationStage.process(dto);

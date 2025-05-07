@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
@@ -346,7 +347,7 @@ public class AbisHandlerStageTest {
 	}
 
 	@Test
-	public void testDemoToAbisHandlerTOMiddlewareSuccess() throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void testDemoToAbisHandlerTOMiddlewareSuccess() throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
 		registrationStatusDto.setLatestTransactionTypeCode("DEMOGRAPHIC_VERIFICATION");
 		registrationStatusDto.setLatestRegistrationTransactionId("dd7b7d20-910a-4b84-be21-c9f211318563");
 		Mockito.when(registrationStatusService.getRegistrationStatus(any(), any(), any(), any())).thenReturn(registrationStatusDto);
@@ -374,7 +375,7 @@ public class AbisHandlerStageTest {
 	}
 
 	@Test
-	public void testBioToAbisHandlerToMiddlewareSuccess() throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void testBioToAbisHandlerToMiddlewareSuccess() throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		registrationStatusDto.setLatestTransactionTypeCode("DEMOGRAPHIC_VERIFICATION");
 		registrationStatusDto.setLatestRegistrationTransactionId("dd7b7d20-910a-4b84-be21-c9f211318563");
 		Mockito.when(registrationStatusService.getRegistrationStatus(any(), any(), any(), any())).thenReturn(registrationStatusDto);
@@ -456,7 +457,7 @@ public class AbisHandlerStageTest {
 	}
 
 	@Test
-	public void testReprocessInsert() throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void testReprocessInsert() throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		registrationStatusDto.setLatestTransactionTypeCode("BIOGRAPHIC_VERIFICATION");
 		registrationStatusDto.setLatestRegistrationTransactionId("dd7b7d20-910a-4b84-be21-c9f211318563");
 		Mockito.when(registrationStatusService.getRegistrationStatus(any(), any(), any(), any())).thenReturn(registrationStatusDto);
@@ -512,7 +513,7 @@ public class AbisHandlerStageTest {
 	}
 	
 	@Test
-	public void testPotentialMatchNotFound() throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void testPotentialMatchNotFound() throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		registrationStatusDto.setLatestTransactionTypeCode("DEMOGRAPHIC_VERIFICATION");
 		registrationStatusDto.setLatestRegistrationTransactionId("dd7b7d20-910a-4b84-be21-c9f211318563");
 		Mockito.when(registrationStatusService.getRegistrationStatus(any(), any(), any(), any())).thenReturn(registrationStatusDto);
@@ -535,7 +536,7 @@ public class AbisHandlerStageTest {
 	}
 	
 	@Test
-	public void testIdentifyRequestJsonProcessingException() throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void testIdentifyRequestJsonProcessingException() throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		registrationStatusDto.setLatestTransactionTypeCode("DEMOGRAPHIC_VERIFICATION");
 		registrationStatusDto.setLatestRegistrationTransactionId("dd7b7d20-910a-4b84-be21-c9f211318563");
 		Mockito.when(registrationStatusService.getRegistrationStatus(any(), any(), any(), any())).thenReturn(registrationStatusDto);
@@ -564,7 +565,7 @@ public class AbisHandlerStageTest {
 	}
 	
 	@Test
-	public void testInsertRequestJsonProcessingException() throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void testInsertRequestJsonProcessingException() throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		registrationStatusDto.setLatestTransactionTypeCode("DEMOGRAPHIC_VERIFICATION");
 		registrationStatusDto.setLatestRegistrationTransactionId("dd7b7d20-910a-4b84-be21-c9f211318563");
 		Mockito.when(registrationStatusService.getRegistrationStatus(any(), any(), any(), any())).thenReturn(registrationStatusDto);
@@ -586,7 +587,7 @@ public class AbisHandlerStageTest {
 	}
 	
 	@Test
-	public void testDataShareResponseNullException() throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void testDataShareResponseNullException() throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		registrationStatusDto.setLatestTransactionTypeCode("DEMOGRAPHIC_VERIFICATION");
 		registrationStatusDto.setLatestRegistrationTransactionId("dd7b7d20-910a-4b84-be21-c9f211318563");
 		Mockito.when(registrationStatusService.getRegistrationStatus(any(), any(), any(), any())).thenReturn(registrationStatusDto);
@@ -637,7 +638,7 @@ public class AbisHandlerStageTest {
 
 	@Test
 	public void testvalidateBiometricRecordModalitiesEmptyException()
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		registrationStatusDto.setLatestTransactionTypeCode("DEMOGRAPHIC_VERIFICATION");
 		registrationStatusDto.setLatestRegistrationTransactionId("dd7b7d20-910a-4b84-be21-c9f211318563");
 		Mockito.when(registrationStatusService.getRegistrationStatus(any(), any(), any(), any()))
@@ -671,7 +672,7 @@ public class AbisHandlerStageTest {
 	
 	@Test
 	public void testvalidateBiometricRecordSegmentEmptyException()
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		registrationStatusDto.setLatestTransactionTypeCode("DEMOGRAPHIC_VERIFICATION");
 		registrationStatusDto.setLatestRegistrationTransactionId("dd7b7d20-910a-4b84-be21-c9f211318563");
 		Mockito.when(registrationStatusService.getRegistrationStatus(any(), any(), any(), any()))
@@ -695,7 +696,7 @@ public class AbisHandlerStageTest {
 	
 	@Test
 	public void testvalidateBiometricRecordOthersMapNullException()
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		registrationStatusDto.setLatestTransactionTypeCode("DEMOGRAPHIC_VERIFICATION");
 		registrationStatusDto.setLatestRegistrationTransactionId("dd7b7d20-910a-4b84-be21-c9f211318563");
 		Mockito.when(registrationStatusService.getRegistrationStatus(any(), any(), any(), any()))
@@ -802,7 +803,7 @@ public class AbisHandlerStageTest {
 
 	@Test
 	public void bioRecordDataNotFound()
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 
 		defaultMockToProcess();
 
@@ -820,7 +821,7 @@ public class AbisHandlerStageTest {
 
 	@Test
 	public void biometricsNotFoundWithSegmentConfig()
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 
 		defaultMockToProcess();
 
@@ -858,7 +859,7 @@ public class AbisHandlerStageTest {
 	}
 	
 	@Test
-	public void testBiometricSegmentNotConfiguredInfant() throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void testBiometricSegmentNotConfiguredInfant() throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		registrationStatusDto.setLatestTransactionTypeCode("DEMOGRAPHIC_VERIFICATION");
 		registrationStatusDto.setLatestRegistrationTransactionId("dd7b7d20-910a-4b84-be21-c9f211318563");
 		Mockito.when(registrationStatusService.getRegistrationStatus(any(), any(), any(), any())).thenReturn(registrationStatusDto);
@@ -889,7 +890,7 @@ public class AbisHandlerStageTest {
 
 	@Test
 	public void emptyBdbFound()
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 
 		defaultMockToProcess();
 
@@ -911,7 +912,7 @@ public class AbisHandlerStageTest {
 	
 	@Test
 	public void noBdbInAnyBiometric()
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 
 		defaultMockToProcess();
 
@@ -950,7 +951,7 @@ public class AbisHandlerStageTest {
 
 	}
 
-	private void setMetaInfoMap(List<String> exceptionAttributes) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException{
+	private void setMetaInfoMap(List<String> exceptionAttributes) throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException{
 		
 		Map<String, String> metaInfoMap = new HashMap<>();
 		

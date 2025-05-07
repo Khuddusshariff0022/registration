@@ -261,7 +261,7 @@ public class Utilities {
 	 * @throws RegistrationProcessorCheckedException
 	 */
 	public int getApplicantAge(String id, String process, ProviderStageName stageName)
-			throws IOException, ApisResourceAccessException, JsonProcessingException, PacketManagerException {
+            throws IOException, ApisResourceAccessException, JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.USERID.toString(), id,
 				"Utilities::getApplicantAge()::entry");
 
@@ -604,7 +604,7 @@ public class Utilities {
 	 * @throws RegistrationProcessorCheckedException
 	 */
 	public String getUIn(String id, String process, ProviderStageName stageName)
-			throws IOException, ApisResourceAccessException, PacketManagerException, JsonProcessingException {
+            throws IOException, ApisResourceAccessException, PacketManagerException, JsonProcessingException, PacketManagerFailureException {
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(), id,
 				"Utilities::getUIn()::entry");
 		String UIN = packetManagerService.getFieldByMappingJsonKey(id, MappingJsonConstants.UIN, process, stageName);

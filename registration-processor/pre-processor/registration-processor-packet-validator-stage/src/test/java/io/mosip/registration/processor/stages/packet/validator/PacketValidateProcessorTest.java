@@ -10,10 +10,7 @@ import io.mosip.registration.processor.core.code.RegistrationExceptionTypeCode;
 import io.mosip.registration.processor.core.constant.JsonConstant;
 import io.mosip.registration.processor.core.constant.PacketFiles;
 import io.mosip.registration.processor.core.constant.RegistrationType;
-import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
-import io.mosip.registration.processor.core.exception.PacketManagerException;
-import io.mosip.registration.processor.core.exception.PacketValidatorException;
-import io.mosip.registration.processor.core.exception.RegistrationProcessorCheckedException;
+import io.mosip.registration.processor.core.exception.*;
 import io.mosip.registration.processor.core.packet.dto.FieldValue;
 import io.mosip.registration.processor.core.packet.dto.FieldValueArray;
 import io.mosip.registration.processor.core.packet.dto.idjson.Document;
@@ -273,7 +270,7 @@ public class PacketValidateProcessorTest {
 	}
 
 	@Test
-	public void PacketValidationSuccessTestwithPacketCreatedDateTimeNull() throws PacketManagerException, ApisResourceAccessException, IOException, JsonProcessingException {
+	public void PacketValidationSuccessTestwithPacketCreatedDateTimeNull() throws PacketManagerException, ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerFailureException {
 		Map<String, String> metainfo = new HashMap<>();
 		metainfo.put(JsonConstant.CREATIONDATE,null);
 		Mockito.when(packetManagerService.getMetaInfo(any(), any(), any())).thenReturn(metainfo);
@@ -288,7 +285,7 @@ public class PacketValidateProcessorTest {
 	}
 
 	@Test
-	public void PacketValidationSuccessTestwithPacketCreatedDateTimeInvalidFormat() throws PacketManagerException, ApisResourceAccessException, IOException, JsonProcessingException {
+	public void PacketValidationSuccessTestwithPacketCreatedDateTimeInvalidFormat() throws PacketManagerException, ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerFailureException {
 		Map<String, String> metainfo = new HashMap<>();
 		metainfo.put(JsonConstant.CREATIONDATE,"2023-10-1703:01:09.893");
 		Mockito.when(packetManagerService.getMetaInfo(any(), any(), any())).thenReturn(metainfo);
@@ -300,7 +297,7 @@ public class PacketValidateProcessorTest {
 	}
 
 	@Test
-	public void PacketValidationFailureTest() throws PacketValidatorException, ApisResourceAccessException, JsonProcessingException, RegistrationProcessorCheckedException, IOException, PacketManagerException {
+	public void PacketValidationFailureTest() throws PacketValidatorException, ApisResourceAccessException, JsonProcessingException, RegistrationProcessorCheckedException, IOException, PacketManagerException, PacketManagerFailureException {
 		registrationStatusDto.setRetryCount(1);
 		Mockito.when(packetValidator.validate(any(), any(),any())).thenReturn(false);
 		MessageDTO object = packetValidateProcessor.process(messageDTO, stageName);
@@ -309,7 +306,7 @@ public class PacketValidateProcessorTest {
 	}
 	@Test
 	public void PacketValidationPacketManagerFailedTest()
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+            throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
 		Mockito.when(packetManagerService.getMetaInfo(anyString(), any(), any()))
 				.thenThrow(PacketManagerException.class);
 		Mockito.when(registrationStatusMapperUtil
@@ -331,7 +328,7 @@ public class PacketValidateProcessorTest {
 	}
 	@Test
 	public void PacketValidationParsingFailedTest()
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+            throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
 		Mockito.when(packetManagerService.getMetaInfo(anyString(), any(), any()))
 				.thenThrow(ParsingException.class);
 		Mockito.when(registrationStatusMapperUtil
@@ -342,7 +339,7 @@ public class PacketValidateProcessorTest {
 	}
 	
 	@Test
-	public void PacketValidationAPIResourceExceptionTest() throws PacketValidatorException, ApisResourceAccessException, JsonProcessingException, RegistrationProcessorCheckedException, IOException, PacketManagerException {
+	public void PacketValidationAPIResourceExceptionTest() throws PacketValidatorException, ApisResourceAccessException, JsonProcessingException, RegistrationProcessorCheckedException, IOException, PacketManagerException, PacketManagerFailureException {
 		ApisResourceAccessException exc=new ApisResourceAccessException("Ex");
 		Mockito.when(packetValidator.validate(any(),any(), any())).thenThrow(exc);
 		Mockito.when(registrationStatusMapperUtil
@@ -353,7 +350,7 @@ public class PacketValidateProcessorTest {
 	}
 	
 	@Test
-	public void PacketValidationIOExceptionTest() throws PacketValidatorException, ApisResourceAccessException, JsonProcessingException, RegistrationProcessorCheckedException, IOException, PacketManagerException {
+	public void PacketValidationIOExceptionTest() throws PacketValidatorException, ApisResourceAccessException, JsonProcessingException, RegistrationProcessorCheckedException, IOException, PacketManagerException, PacketManagerFailureException {
 		IOException exc=new IOException("Ex");
 		Mockito.when(packetValidator.validate(any(),any(), any())).thenThrow(exc);
 		Mockito.when(registrationStatusMapperUtil
@@ -364,7 +361,7 @@ public class PacketValidateProcessorTest {
 	}
 	
 	@Test
-	public void PacketValidationBaseCheckedExceptionTest() throws PacketValidatorException, ApisResourceAccessException, JsonProcessingException, RegistrationProcessorCheckedException, IOException, PacketManagerException {
+	public void PacketValidationBaseCheckedExceptionTest() throws PacketValidatorException, ApisResourceAccessException, JsonProcessingException, RegistrationProcessorCheckedException, IOException, PacketManagerException, PacketManagerFailureException {
 		RegistrationProcessorCheckedException exc=new RegistrationProcessorCheckedException("", "", new RegistrationProcessorCheckedException("", ""));
 		Mockito.when(packetValidator.validate(any(), any(),any())).thenThrow(exc);
 		Mockito.when(registrationStatusMapperUtil
@@ -376,7 +373,7 @@ public class PacketValidateProcessorTest {
 	
 	@Test
 	public void notificationSendFailedTest() throws PacketValidatorException, ApisResourceAccessException,
-			PacketManagerException, JsonProcessingException, IOException, JSONException {
+            PacketManagerException, JsonProcessingException, IOException, JSONException, PacketManagerFailureException {
 		Mockito.doThrow(IOException.class).when(notificationUtility).sendNotification(any(), any(), any(), any(),
 				anyBoolean(),anyBoolean());
 		MessageDTO object = packetValidateProcessor.process(messageDTO, stageName);

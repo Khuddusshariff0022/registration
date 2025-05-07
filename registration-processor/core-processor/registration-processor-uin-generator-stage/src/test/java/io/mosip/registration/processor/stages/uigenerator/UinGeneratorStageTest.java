@@ -26,6 +26,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.registration.processor.core.constant.ProviderStageName;
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import io.mosip.registration.processor.packet.manager.dto.IdRequestDto;
 import io.mosip.registration.processor.stages.uingenerator.dto.VidResponseDto;
 import org.apache.commons.io.IOUtils;
@@ -975,7 +976,7 @@ public class UinGeneratorStageTest {
 
 	@Test
 	public void deactivateTestSuccess() throws ApisResourceAccessException, IOException, JSONException,
-			JsonProcessingException, PacketManagerException, IdrepoDraftException, IdrepoDraftReprocessableException {
+			JsonProcessingException, PacketManagerException, PacketManagerFailureException, IdrepoDraftException, IdrepoDraftReprocessableException {
 
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
@@ -1025,7 +1026,7 @@ public class UinGeneratorStageTest {
 	}
 	
 	@Test
-	public void checkIsUinDeactivatedSuccess() throws ApisResourceAccessException, IOException, JSONException, JsonProcessingException, PacketManagerException {
+	public void checkIsUinDeactivatedSuccess() throws ApisResourceAccessException, IOException, JSONException, JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
@@ -1064,7 +1065,7 @@ public class UinGeneratorStageTest {
 	}
 	@Test
 	public void deactivateTestWithDeactivate() throws ApisResourceAccessException, IOException, JSONException,
-			JsonProcessingException, PacketManagerException, IdrepoDraftException, IdrepoDraftReprocessableException {
+			JsonProcessingException, PacketManagerException, PacketManagerFailureException, IdrepoDraftException, IdrepoDraftReprocessableException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -1114,7 +1115,7 @@ public class UinGeneratorStageTest {
 			
 	@Test
 	public void deactivateTestWithNullResponseDTO()
-			throws ApisResourceAccessException, PacketManagerException, IOException, JsonProcessingException,
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, IOException, JsonProcessingException,
 			JSONException, IdrepoDraftException, IdrepoDraftReprocessableException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
@@ -1163,7 +1164,7 @@ public class UinGeneratorStageTest {
 
 	@Test
 	public void deactivateTestForExistingUinTestSuccess()
-			throws ApisResourceAccessException, PacketManagerException, IOException, JsonProcessingException,
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, IOException, JsonProcessingException,
 			JSONException, IdrepoDraftException, IdrepoDraftReprocessableException {
 		MessageDTO messageDTO = new MessageDTO();
 		messageDTO.setRid("10031100110005020190313110030");
@@ -1215,7 +1216,7 @@ public class UinGeneratorStageTest {
 	}
 
 	@Test
-	public void deactivateTestFailure() throws ApisResourceAccessException, PacketManagerException, IOException,
+	public void deactivateTestFailure() throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, IOException,
 			JsonProcessingException, JSONException, IdrepoDraftException, IdrepoDraftReprocessableException {
 
 		Map<String, String> fieldMap = new HashMap<>();
@@ -1604,7 +1605,7 @@ public class UinGeneratorStageTest {
 
 	@Test
 	public void updateTestSuccess() throws ApisResourceAccessException, IOException, JsonProcessingException,
-			PacketManagerException, JSONException, IdrepoDraftException, IdrepoDraftReprocessableException {
+            PacketManagerException, JSONException, IdrepoDraftException, IdrepoDraftReprocessableException, PacketManagerFailureException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -1930,7 +1931,7 @@ public class UinGeneratorStageTest {
 	}
 
 	@Test
-	public void testJsonProcessingException() throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException {
+	public void testJsonProcessingException() throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, JsonProcessingException {
 
 		when(packetManagerService.getFieldByMappingJsonKey(any(), any(),any(), any())).thenThrow(new io.mosip.kernel.core.util.exception.JsonProcessingException(""));
 		MessageDTO messageDTO = new MessageDTO();
@@ -2001,9 +2002,9 @@ public class UinGeneratorStageTest {
 
 	@Test
 	public void deactivateTestWithNullResponseDTOBeforeDeactivate() throws ApisResourceAccessException,
-			PacketManagerException,
-			IOException, JsonProcessingException, JSONException, IdrepoDraftException,
-			IdrepoDraftReprocessableException {
+            PacketManagerException,
+            IOException, JsonProcessingException, JSONException, IdrepoDraftException,
+            IdrepoDraftReprocessableException, PacketManagerFailureException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -2051,9 +2052,9 @@ public class UinGeneratorStageTest {
 
 	@Test
 	public void deactivateTesApiResourceClientException() throws ApisResourceAccessException,
-			PacketManagerException,
-			IOException, JsonProcessingException, JSONException, IdrepoDraftException,
-			IdrepoDraftReprocessableException {
+            PacketManagerException,
+            IOException, JsonProcessingException, JSONException, IdrepoDraftException,
+            IdrepoDraftReprocessableException, PacketManagerFailureException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -2102,9 +2103,9 @@ public class UinGeneratorStageTest {
 
 	@Test
 	public void deactivateTesApiResourceServerException() throws ApisResourceAccessException,
-			PacketManagerException,
-			IOException, JsonProcessingException, JSONException, IdrepoDraftException,
-			IdrepoDraftReprocessableException {
+            PacketManagerException,
+            IOException, JsonProcessingException, JSONException, IdrepoDraftException,
+            IdrepoDraftReprocessableException, PacketManagerFailureException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -2151,9 +2152,9 @@ public class UinGeneratorStageTest {
 
 	@Test
 	public void deactivateTesApiResourceException() throws ApisResourceAccessException,
-			PacketManagerException,
-			IOException, JsonProcessingException, JSONException, IdrepoDraftException,
-			IdrepoDraftReprocessableException {
+            PacketManagerException,
+            IOException, JsonProcessingException, JSONException, IdrepoDraftException,
+            IdrepoDraftReprocessableException, PacketManagerFailureException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -2200,9 +2201,9 @@ public class UinGeneratorStageTest {
 
 	@Test
 	public void deactivateTestAlreadyDeactivated() throws ApisResourceAccessException,
-			PacketManagerException,
-			IOException, JsonProcessingException, JSONException, IdrepoDraftException,
-			IdrepoDraftReprocessableException {
+            PacketManagerException,
+            IOException, JsonProcessingException, JSONException, IdrepoDraftException,
+            IdrepoDraftReprocessableException, PacketManagerFailureException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -2251,7 +2252,7 @@ public class UinGeneratorStageTest {
 	}
 
 	@Test
-	public void testUinAlreadyDeactivated() throws ApisResourceAccessException, PacketManagerException, IOException,
+	public void testUinAlreadyDeactivated() throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, IOException,
 			JsonProcessingException, JSONException, IdrepoDraftException, IdrepoDraftReprocessableException {
 		Map<String, String> fieldsMap = new HashMap<>();
 		fieldsMap.put("UIN", "123456");
@@ -2575,7 +2576,7 @@ public class UinGeneratorStageTest {
 
 	@Test
 	public void updateTestWithAdditionalProcess() throws ApisResourceAccessException, IOException, JsonProcessingException,
-			PacketManagerException, JSONException, IdrepoDraftException, IdrepoDraftReprocessableException {
+            PacketManagerException, JSONException, IdrepoDraftException, IdrepoDraftReprocessableException, PacketManagerFailureException {
 		Map<String ,String> externalInternalMap = new HashMap<>();
 		externalInternalMap.put("CRVS_UPDATE", "UPDATE");
 		ReflectionTestUtils.setField(uinGeneratorStage, "additionalProcessCategoryMapping", externalInternalMap);

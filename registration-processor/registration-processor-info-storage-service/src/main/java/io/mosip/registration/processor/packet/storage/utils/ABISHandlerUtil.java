@@ -13,6 +13,7 @@ import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.registration.processor.core.code.AbisStatusCode;
 import io.mosip.registration.processor.core.constant.ProviderStageName;
 import io.mosip.registration.processor.core.exception.PacketManagerException;
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import io.mosip.registration.processor.status.code.RegistrationStatusCode;
 import io.mosip.registration.processor.status.entity.RegistrationStatusEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,7 @@ public class ABISHandlerUtil {
 	 * @throws                                       io.mosip.kernel.core.exception.IOException
 	 */
 	public Set<String> getUniqueRegIds(String registrationId, String registrationType,
-										int iteration, String workflowInstanceId, ProviderStageName stageName) throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException {
+										int iteration, String workflowInstanceId, ProviderStageName stageName) throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException, PacketManagerFailureException {
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.USERID.toString(),
 				registrationId, "ABISHandlerUtil::getUniqueRegIds()::entry");
 		
@@ -206,7 +207,7 @@ public class ABISHandlerUtil {
 	 */
 	public Set<String> getUniqueRegIds(List<String> matchedRegistrationIds, String registrationId,
 										String registrationType, ProviderStageName stageName) throws ApisResourceAccessException, IOException,
-			JsonProcessingException, PacketManagerException {
+            JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 
 		Map<String, String> filteredRegMap = new LinkedHashMap<>();
 		Set<String> filteredRIds = new HashSet<>();

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.mosip.registration.processor.core.constant.VidType;
+import io.mosip.registration.processor.core.exception.*;
 import io.mosip.registration.processor.core.idrepo.dto.VidInfoDTO;
 import io.mosip.registration.processor.core.idrepo.dto.VidsInfosDTO;
 import org.apache.commons.io.IOUtils;
@@ -47,10 +48,6 @@ import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.registration.processor.core.code.ApiName;
 import io.mosip.registration.processor.core.constant.IdType;
 import io.mosip.registration.processor.core.constant.MappingJsonConstants;
-import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
-import io.mosip.registration.processor.core.exception.PacketDecryptionFailureException;
-import io.mosip.registration.processor.core.exception.PacketManagerException;
-import io.mosip.registration.processor.core.exception.RegistrationProcessorCheckedException;
 import io.mosip.registration.processor.core.http.ResponseWrapper;
 import io.mosip.registration.processor.core.idrepo.dto.IdResponseDTO;
 import io.mosip.registration.processor.core.idrepo.dto.ResponseDTO;
@@ -284,7 +281,7 @@ public class MessageNotificationServiceImplTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testSendSmsNotificationSuccess() throws ApisResourceAccessException, IOException,
-			PacketDecryptionFailureException, io.mosip.kernel.core.exception.IOException, JSONException {
+            PacketDecryptionFailureException, io.mosip.kernel.core.exception.IOException, JSONException, PacketManagerFailureException {
 		ResponseWrapper<SmsResponseDto> wrapper = new ResponseWrapper<>();
 		smsResponseDto = new SmsResponseDto();
 		smsResponseDto.setMessage("Success");
@@ -301,7 +298,7 @@ public class MessageNotificationServiceImplTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testUINTypeMessage() throws ApisResourceAccessException, IOException, PacketDecryptionFailureException,
-			io.mosip.kernel.core.exception.IOException, JSONException {
+            io.mosip.kernel.core.exception.IOException, JSONException, PacketManagerFailureException {
 		ResponseWrapper<SmsResponseDto> wrapper = new ResponseWrapper<>();
 		smsResponseDto = new SmsResponseDto();
 		smsResponseDto.setMessage("Success");
@@ -358,7 +355,7 @@ public class MessageNotificationServiceImplTest {
 	 */
 	@Test(expected = PhoneNumberNotFoundException.class)
 	public void testPhoneNumberNotFoundException() throws ApisResourceAccessException, IOException,
-			PacketDecryptionFailureException, io.mosip.kernel.core.exception.IOException, JsonProcessingException, PacketManagerException, JSONException {
+            PacketDecryptionFailureException, io.mosip.kernel.core.exception.IOException, JsonProcessingException, PacketManagerException, JSONException, PacketManagerFailureException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("name", "mono");
 		fieldMap.put("email", "mono@mono.com");
@@ -404,7 +401,7 @@ public class MessageNotificationServiceImplTest {
 	 */
 	@Test(expected = TemplateGenerationFailedException.class)
 	public void testTemplateGenerationFailedException() throws IOException, ApisResourceAccessException,
-			PacketDecryptionFailureException, io.mosip.kernel.core.exception.IOException, JSONException {
+            PacketDecryptionFailureException, io.mosip.kernel.core.exception.IOException, JSONException, PacketManagerFailureException {
 		Mockito.when(templateGenerator.getTemplate(anyString(), any(), anyString()))
 				.thenThrow(new TemplateNotFoundException());
 

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
@@ -146,7 +147,7 @@ public class NotificationUtility {
 	public void sendNotification(RegistrationAdditionalInfoDTO registrationAdditionalInfoDTO,
 			InternalRegistrationStatusDto registrationStatusDto, SyncRegistrationEntity regEntity,
 			String[] allNotificationTypes, boolean isProcessingSuccess,boolean isValidSupervisorStatus)
-			throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException, JSONException {
+            throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException, JSONException, PacketManagerFailureException {
 		registrationId = regEntity.getRegistrationId();
 		LogDescription description = new LogDescription();
 		String regType = regEntity.getRegistrationType();
@@ -197,8 +198,8 @@ public class NotificationUtility {
 		}
 	}
 
-	private List<String> getPreferredLanguages(InternalRegistrationStatusDto registrationStatusDto) throws ApisResourceAccessException, 
-	PacketManagerException, JsonProcessingException, IOException, JSONException {
+	private List<String> getPreferredLanguages(InternalRegistrationStatusDto registrationStatusDto) throws ApisResourceAccessException,
+            PacketManagerException, JsonProcessingException, IOException, JSONException, PacketManagerFailureException {
 		if(userPreferredLanguageAttribute!=null && !userPreferredLanguageAttribute.isBlank()) {
 			try {
 			String preferredLang=packetManagerService.getField(registrationStatusDto.getRegistrationId(), userPreferredLanguageAttribute,

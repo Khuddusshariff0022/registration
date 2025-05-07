@@ -7,6 +7,7 @@ import io.mosip.registration.processor.core.constant.AbisConstant;
 import io.mosip.registration.processor.core.constant.ProviderStageName;
 import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
 import io.mosip.registration.processor.core.exception.PacketManagerException;
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import io.mosip.registration.processor.core.packet.dto.Identity;
 import io.mosip.registration.processor.core.packet.dto.abis.AbisResponseDetDto;
 import io.mosip.registration.processor.core.packet.dto.abis.AbisResponseDto;
@@ -131,7 +132,7 @@ public class ABISHandlerUtilTest {
     }
 
     @Test
-    public void testProcesssedWithUniqueUin() throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException, io.mosip.kernel.core.exception.IOException {
+    public void testProcesssedWithUniqueUin() throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException, io.mosip.kernel.core.exception.IOException, PacketManagerFailureException {
 
         Set<String> uniqueRids = abisHandlerUtil.getUniqueRegIds(registrationId, registrationType, 1, "", ProviderStageName.BIO_DEDUPE);
 // expected to pick 2 rids from processedMatchedIds list because different uin.
@@ -140,7 +141,7 @@ public class ABISHandlerUtilTest {
     }
 
     @Test
-    public void testProcesssedWithSameUin() throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException, io.mosip.kernel.core.exception.IOException {
+    public void testProcesssedWithSameUin() throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException, io.mosip.kernel.core.exception.IOException, PacketManagerFailureException {
 
         when(idRepoService.getUinByRid(anyString(), anyString())).thenReturn("987654321");
 
@@ -150,7 +151,7 @@ public class ABISHandlerUtilTest {
     }
 
     @Test
-    public void testDonotReturnRejected() throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException, io.mosip.kernel.core.exception.IOException {
+    public void testDonotReturnRejected() throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException, io.mosip.kernel.core.exception.IOException, PacketManagerFailureException {
 
 //        List<String> uniqueRids = abisHandlerUtil.getUniqueRegIds(registrationId, registrationType, ProviderStageName.BIO_DEDUPE);
         Set<String> uniqueRids= abisHandlerUtil.getUniqueRegIds(registrationId,registrationType,1,"",ProviderStageName.BIO_DEDUPE);
@@ -159,7 +160,7 @@ public class ABISHandlerUtilTest {
     }
 
     @Test
-    public void testReturnAllInprogress() throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException, io.mosip.kernel.core.exception.IOException {
+    public void testReturnAllInprogress() throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException, io.mosip.kernel.core.exception.IOException, PacketManagerFailureException {
 
         when(idRepoService.getUinByRid(anyString(), anyString())).thenReturn(null);
 

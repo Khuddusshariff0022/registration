@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import io.mosip.registration.processor.packet.storage.utils.Utilities;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -313,6 +314,19 @@ public class PacketValidateProcessor {
 					description.getCode() + " -- " + registrationId,
 					PlatformErrorMessages.RPR_RGS_REGISTRATION_TABLE_NOT_ACCESSIBLE.getMessage() + e.getMessage()
 							+ ExceptionUtils.getStackTrace(e));
+		} catch (PacketManagerFailureException exc) {
+			registrationStatusDto.setStatusCode(RegistrationStatusCode.FAILED.toString());
+			registrationStatusDto.setStatusComment(
+					trimMessage.trimExceptionMessage(StatusUtil.PACKET_VALIDATION_FAILED.getMessage() + exc.getMessage()));
+			registrationStatusDto.setSubStatusCode(StatusUtil.PACKET_VALIDATION_FAILED.getCode() );
+			registrationStatusDto.setLatestTransactionStatusCode(
+					registrationStatusMapperUtil.getStatusCode(RegistrationExceptionTypeCode.PACKET_MANAGER_EXCEPTION));
+			packetValidationDto.setTransactionSuccessful(false);
+			description.setMessage(PlatformErrorMessages.RPR_PVM_PACKET_VALIDATION_FAILED.getMessage());
+			description.setCode(PlatformErrorMessages.RPR_PVM_PACKET_VALIDATION_FAILED.getCode());
+			regProcLogger.error(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
+					description.getCode() + " -- " + registrationId,
+					PlatformErrorMessages.RPR_PVM_PACKET_VALIDATION_FAILED.getMessage() + ExceptionUtils.getStackTrace(exc));
 		} catch (IdentityNotFoundException | IOException exc) {
 			registrationStatusDto.setStatusCode(RegistrationStatusCode.FAILED.toString());
 			registrationStatusDto.setStatusComment(
@@ -456,7 +470,7 @@ public class PacketValidateProcessor {
 	}
 
 
-	private void setPacketCreatedDateTime(InternalRegistrationStatusDto registrationStatusDto) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	private void setPacketCreatedDateTime(InternalRegistrationStatusDto registrationStatusDto) throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		try {
 			Map<String, String> metaInfo = packetManagerService.getMetaInfo(
 					registrationStatusDto.getRegistrationId(), registrationStatusDto.getRegistrationType(), ProviderStageName.PACKET_VALIDATOR);
@@ -496,7 +510,7 @@ public class PacketValidateProcessor {
 	@SuppressWarnings("unchecked")
 	private void reverseDataSync(String id, String process, LogDescription description,
 			PacketValidationDto packetValidationDto) throws IOException, ApisResourceAccessException,
-			PacketManagerException, JsonProcessingException, JSONException {
+            PacketManagerException, JsonProcessingException, JSONException, PacketManagerFailureException {
 
 		Map<String, String> metaInfoMap = packetManagerService.getMetaInfo(id, process,
 				ProviderStageName.PACKET_VALIDATOR);

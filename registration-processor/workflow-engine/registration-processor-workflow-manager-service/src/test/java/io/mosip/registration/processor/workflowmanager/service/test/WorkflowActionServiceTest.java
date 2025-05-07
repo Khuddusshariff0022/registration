@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import io.mosip.registration.processor.workflowmanager.verticle.WorkflowInstanceApi;
 import org.apache.commons.collections.map.HashedMap;
 import org.junit.Before;
@@ -122,7 +123,7 @@ public class WorkflowActionServiceTest {
 	}
 	
 	@Test(expected = WorkflowActionException.class)
-	public void testResumeProcessingPacketManagerException() throws WorkflowActionException, ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void testResumeProcessingPacketManagerException() throws WorkflowActionException, ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
 		PacketManagerException packetManagerException = new PacketManagerException("ERR-001", "exception occured");
 		Mockito.doThrow(packetManagerException).when(packetManagerService).getTags(anyString(), any());
 		List<InternalRegistrationStatusDto> internalRegistrationStatusDtos = new ArrayList<InternalRegistrationStatusDto>();
@@ -131,7 +132,7 @@ public class WorkflowActionServiceTest {
 	}
 	
 	@Test(expected = WorkflowActionException.class)
-	public void testResumeProcessingIOException() throws WorkflowActionException, ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void testResumeProcessingIOException() throws WorkflowActionException, ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		IOException exception = new IOException("exception occured");
 		Mockito.doThrow(exception).when(packetManagerService).getTags(anyString(), any());
 		List<InternalRegistrationStatusDto> internalRegistrationStatusDtos = new ArrayList<InternalRegistrationStatusDto>();
@@ -155,7 +156,7 @@ public class WorkflowActionServiceTest {
 	}
 	
 	@Test(expected = WorkflowActionException.class)
-	public void testResumeFromBeginningPacketManagerException() throws WorkflowActionException, ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void testResumeFromBeginningPacketManagerException() throws WorkflowActionException, ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		List<InternalRegistrationStatusDto> internalRegistrationStatusDtos = new ArrayList<InternalRegistrationStatusDto>();
 		internalRegistrationStatusDtos.add(registrationStatusDto);
 		PacketManagerException packetManagerException = new PacketManagerException("ERR-001", "exception occured");
@@ -164,7 +165,7 @@ public class WorkflowActionServiceTest {
 	}
 	
 	@Test(expected = WorkflowActionException.class)
-	public void testResumeFromBeginningIOException() throws WorkflowActionException, ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+	public void testResumeFromBeginningIOException() throws WorkflowActionException, ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		List<InternalRegistrationStatusDto> internalRegistrationStatusDtos = new ArrayList<InternalRegistrationStatusDto>();
 		internalRegistrationStatusDtos.add(registrationStatusDto);
 		IOException exception = new IOException("exception occured");

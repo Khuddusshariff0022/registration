@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import io.mosip.registration.processor.core.exception.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,6 @@ import io.mosip.registration.processor.core.constant.AbisConstant;
 import io.mosip.registration.processor.core.constant.LoggerFileConstant;
 import io.mosip.registration.processor.core.constant.MappingJsonConstants;
 import io.mosip.registration.processor.core.constant.ProviderStageName;
-import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
-import io.mosip.registration.processor.core.exception.PacketDecryptionFailureException;
-import io.mosip.registration.processor.core.exception.PacketManagerException;
-import io.mosip.registration.processor.core.exception.RegistrationProcessorCheckedException;
 import io.mosip.registration.processor.core.exception.util.PlatformErrorMessages;
 import io.mosip.registration.processor.core.exception.util.PlatformSuccessMessages;
 import io.mosip.registration.processor.core.logger.LogDescription;
@@ -349,7 +346,7 @@ public class DemodedupeProcessor {
 			InternalRegistrationStatusDto registrationStatusDto, List<DemographicInfoDto> duplicateDtos,
 			MessageDTO object, String moduleId, String moduleName, boolean isDemoDedupeSkip, LogDescription description)
 			throws ApisResourceAccessException,
-	JsonProcessingException, PacketManagerException, IOException, PacketDecryptionFailureException, io.mosip.kernel.core.exception.IOException, RegistrationProcessorCheckedException {
+	JsonProcessingException, PacketManagerException, PacketManagerFailureException, IOException, io.mosip.kernel.core.exception.IOException, RegistrationProcessorCheckedException {
 		DemoDedupeStatusDTO demoDedupeStatusDTO=new DemoDedupeStatusDTO();
 		boolean isTransactionSuccessful = false;
 		String packetStatus = abisHandlerUtil.getPacketStatus(registrationStatusDto);
@@ -480,7 +477,7 @@ public class DemodedupeProcessor {
 	 */
 	private boolean processDemoDedupeRequesthandler(InternalRegistrationStatusDto registrationStatusDto,
 			MessageDTO object, LogDescription description)
-			throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException {
+			throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 		boolean isTransactionSuccessful = false;
 		List<String> responsIds = new ArrayList<>();
 
@@ -626,7 +623,7 @@ public class DemodedupeProcessor {
 	 * @throws RegistrationProcessorCheckedException
 	 */
 	private void saveManualAdjudicationData(InternalRegistrationStatusDto registrationStatusDto, MessageDTO messageDTO)
-			throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException {
+			throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 		Set<String> matchedRegIds = abisHandlerUtil.getUniqueRegIds(registrationStatusDto.getRegistrationId(),
 				registrationStatusDto.getRegistrationType(), registrationStatusDto.getIteration(),
 				registrationStatusDto.getWorkflowInstanceId(), ProviderStageName.DEMO_DEDUPE);

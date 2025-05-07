@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.simple.JSONObject;
@@ -450,7 +451,7 @@ public class ManualAdjudicationServiceImpl implements ManualAdjudicationService 
 		return CreateDataShareUrl(requestDto, policy);
 	}
 
-	private String getDataShareUrlfromIdRepo(String id) throws DataShareException, ApisResourceAccessException, JsonProcessingException, IOException, PacketManagerException  {
+	private String getDataShareUrlfromIdRepo(String id) throws DataShareException, ApisResourceAccessException, JsonProcessingException, IOException, PacketManagerException, PacketManagerFailureException {
 
 		DataShareRequestDto requestDto = new DataShareRequestDto();
 		LinkedHashMap<String, Object> policy = getPolicy();
@@ -549,7 +550,7 @@ public class ManualAdjudicationServiceImpl implements ManualAdjudicationService 
 				.collect(Collectors.toMap(e-> e.getKey(),e -> e.getValue()));
 		return demographicMap;
 	}
-	private DataShareRequestDto setDocuments(Map<String,String> policyMap,DataShareRequestDto requestDto, String id, String process, List<Documents> documents) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException{
+	private DataShareRequestDto setDocuments(Map<String,String> policyMap,DataShareRequestDto requestDto, String id, String process, List<Documents> documents) throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException{
 		JSONObject docJson = utility.getRegistrationProcessorMappingJson(MappingJsonConstants.DOCUMENT);
 		for (Object doc : docJson.keySet()) {
 			if (doc != null) {

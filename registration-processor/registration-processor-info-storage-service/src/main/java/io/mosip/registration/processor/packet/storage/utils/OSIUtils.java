@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.apache.commons.collections.MapUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +32,7 @@ public class OSIUtils {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	public RegOsiDto getOSIDetailsFromMetaInfo(Map<String, String> metaInfo) throws IOException, ApisResourceAccessException, JsonProcessingException, PacketManagerException, JSONException {
+	public RegOsiDto getOSIDetailsFromMetaInfo(Map<String, String> metaInfo) throws IOException, ApisResourceAccessException, JsonProcessingException, PacketManagerException, PacketManagerFailureException, JSONException {
 		Map<String, String> allMap = getMetaMap(metaInfo);
 		RegOsiDto regOsi = new RegOsiDto();
 		regOsi.setOfficerHashedPin(allMap.get(JsonConstant.OFFICERPIN));

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import io.mosip.registration.processor.packet.storage.utils.Utilities;
 import org.json.JSONException;
 import org.json.simple.parser.ParseException;
@@ -416,8 +417,8 @@ public class NotificationServiceImpl implements NotificationService {
 
 	private boolean sendSms(String id, String process, Map<String, Object> attributes, String regType,
 			MessageSenderDto messageSenderDto, LogDescription description)
-			throws ApisResourceAccessException, IOException,
-			io.mosip.registration.processor.core.exception.PacketDecryptionFailureException, JSONException {
+            throws ApisResourceAccessException, IOException,
+            io.mosip.registration.processor.core.exception.PacketDecryptionFailureException, JSONException, PacketManagerFailureException {
 		boolean isSmsSuccess = false;
 		try {
 			SmsResponseDto smsResponse = service.sendSmsNotification(messageSenderDto.getSmsTemplateCode(), id,

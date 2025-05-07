@@ -7,13 +7,14 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import io.mosip.registration.processor.core.packet.dto.packetmanager.TagRequestDto;
 import io.mosip.registration.processor.core.packet.dto.packetmanager.TagResponseDto;
 import io.mosip.registration.processor.packet.storage.exception.ObjectDoesnotExistsException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -55,6 +56,10 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
     private static final String VERSION = "v1";
     private static final String OBJECT_DOESNOT_EXISTS_ERROR_CODE = "KER-PUT-027";
 
+
+    @Value("#{'${mosip.registration.processor.packet.manager.failed.response.codes}'.split(',')}")
+    private List<String> blockedValues;
+
     @Autowired
     private RegistrationProcessorRestClientService<Object> restApi;
 
@@ -69,7 +74,7 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
-    protected String getField(String id, String field, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+    protected String getField(String id, String field, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
         FieldDto fieldDto = new FieldDto(id, field, source, process, false);
 
         RequestWrapper<FieldDto> request = new RequestWrapper<>();
@@ -84,6 +89,9 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
             ErrorDTO errorDTO = response.getErrors().iterator().next();
             if (OBJECT_DOESNOT_EXISTS_ERROR_CODE.equalsIgnoreCase(errorDTO.getErrorCode()))
                 throw new ObjectDoesnotExistsException(errorDTO.getErrorCode(), errorDTO.getMessage());
+            if(blockedValues.contains(errorDTO.getErrorCode()))
+                throw new PacketManagerFailureException(errorDTO.getErrorCode(), errorDTO.getMessage());
+
             else
                 throw new PacketManagerException(errorDTO.getErrorCode(), errorDTO.getMessage());
         }
@@ -96,7 +104,7 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
         return responseField;
     }
 
-    protected Map<String, String> getFields(String id, List<String> fields, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+    protected Map<String, String> getFields(String id, List<String> fields, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
         FieldDtos fieldDto = new FieldDtos(id, fields, source, process, false);
 
         RequestWrapper<FieldDtos> request = new RequestWrapper<>();
@@ -111,6 +119,8 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
             ErrorDTO errorDTO = response.getErrors().iterator().next();
             if (OBJECT_DOESNOT_EXISTS_ERROR_CODE.equalsIgnoreCase(errorDTO.getErrorCode()))
                 throw new ObjectDoesnotExistsException(errorDTO.getErrorCode(), errorDTO.getMessage());
+            if(blockedValues.contains(errorDTO.getErrorCode()))
+                throw new PacketManagerFailureException(errorDTO.getErrorCode(), errorDTO.getMessage());
             else
                 throw new PacketManagerException(errorDTO.getErrorCode(), errorDTO.getMessage());
         }
@@ -120,11 +130,11 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
         return fieldResponseDto.getFields();
     }
 
-    protected Document getDocument(String id, String documentName, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+    protected Document getDocument(String id, String documentName, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
         return getDocument(id, documentName, null, process);
     }
 
-    protected Document getDocument(String id, String documentName, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+    protected Document getDocument(String id, String documentName, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
         DocumentDto fieldDto = new DocumentDto(id, documentName, source, process);
 
         RequestWrapper<DocumentDto> request = new RequestWrapper<>();
@@ -139,6 +149,8 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
             ErrorDTO errorDTO = response.getErrors().iterator().next();
             if (OBJECT_DOESNOT_EXISTS_ERROR_CODE.equalsIgnoreCase(errorDTO.getErrorCode()))
                 throw new ObjectDoesnotExistsException(errorDTO.getErrorCode(), errorDTO.getMessage());
+            if(blockedValues.contains(errorDTO.getErrorCode()))
+                throw new PacketManagerFailureException(errorDTO.getErrorCode(), errorDTO.getMessage());
             else
                 throw new PacketManagerException(errorDTO.getErrorCode(), errorDTO.getMessage());
         }
@@ -148,7 +160,7 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
         return document;
     }
 
-    protected ValidatePacketResponse validate(String id, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+    protected ValidatePacketResponse validate(String id, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
         InfoDto fieldDto = new InfoDto(id, source, process, false);
 
         RequestWrapper<InfoDto> request = new RequestWrapper<>();
@@ -163,6 +175,8 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
             ErrorDTO errorDTO = response.getErrors().iterator().next();
             if (OBJECT_DOESNOT_EXISTS_ERROR_CODE.equalsIgnoreCase(errorDTO.getErrorCode()))
                 throw new ObjectDoesnotExistsException(errorDTO.getErrorCode(), errorDTO.getMessage());
+            if(blockedValues.contains(errorDTO.getErrorCode()))
+                throw new PacketManagerFailureException(errorDTO.getErrorCode(), errorDTO.getMessage());
             else
                 throw new PacketManagerException(errorDTO.getErrorCode(), errorDTO.getMessage());
         }
@@ -171,7 +185,7 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
         return validatePacketResponse;
     }
 
-    protected List<FieldResponseDto> getAudits(String id, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+    protected List<FieldResponseDto> getAudits(String id, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
 
         InfoDto fieldDto = new InfoDto(id, source, process, false);
         List<FieldResponseDto> response = new ArrayList<>();
@@ -188,6 +202,8 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
             ErrorDTO errorDTO = responseObj.getErrors().iterator().next();
             if (OBJECT_DOESNOT_EXISTS_ERROR_CODE.equalsIgnoreCase(errorDTO.getErrorCode()))
                 throw new ObjectDoesnotExistsException(errorDTO.getErrorCode(), errorDTO.getMessage());
+            if(blockedValues.contains(errorDTO.getErrorCode()))
+                throw new PacketManagerFailureException(errorDTO.getErrorCode(), errorDTO.getMessage());
             else
                 throw new PacketManagerException(errorDTO.getErrorCode(), errorDTO.getMessage());
         }
@@ -200,7 +216,7 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
         return response;
     }
 
-    protected BiometricRecord getBiometrics(String id, String person, List<String> modalities, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+    protected BiometricRecord getBiometrics(String id, String person, List<String> modalities, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
 
         BiometricRequestDto fieldDto = new BiometricRequestDto(id, person, modalities, source, process, false);
 
@@ -216,6 +232,8 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
             ErrorDTO errorDTO = response.getErrors().iterator().next();
             if (OBJECT_DOESNOT_EXISTS_ERROR_CODE.equalsIgnoreCase(errorDTO.getErrorCode()))
                 throw new ObjectDoesnotExistsException(errorDTO.getErrorCode(), errorDTO.getMessage());
+            if(blockedValues.contains(errorDTO.getErrorCode()))
+                throw new PacketManagerFailureException(errorDTO.getErrorCode(), errorDTO.getMessage());
             else
                 throw new PacketManagerException(errorDTO.getErrorCode(), errorDTO.getMessage());
         }
@@ -227,7 +245,7 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
 
     }
 
-    protected Map<String, String> getMetaInfo(String id, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+    protected Map<String, String> getMetaInfo(String id, String source, String process) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
         InfoDto fieldDto = new InfoDto(id, source, process, false);
 
         RequestWrapper<InfoDto> request = new RequestWrapper<>();
@@ -243,6 +261,8 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
             ErrorDTO errorDTO = response.getErrors().iterator().next();
             if (OBJECT_DOESNOT_EXISTS_ERROR_CODE.equalsIgnoreCase(errorDTO.getErrorCode()))
                 throw new ObjectDoesnotExistsException(errorDTO.getErrorCode(), errorDTO.getMessage());
+            if(blockedValues.contains(errorDTO.getErrorCode()))
+                throw new PacketManagerFailureException(errorDTO.getErrorCode(), errorDTO.getMessage());
             else
                 throw new PacketManagerException(errorDTO.getErrorCode(), errorDTO.getMessage());
         }
@@ -252,7 +272,7 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
         return fieldResponseDto.getFields();
     }
 
-    protected InfoResponseDto info(String id) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+    protected InfoResponseDto info(String id) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
         InfoRequestDto infoRequestDto = new InfoRequestDto(id);
 
         RequestWrapper<InfoRequestDto> request = new RequestWrapper<>();
@@ -267,6 +287,8 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
             ErrorDTO errorDTO = response.getErrors().iterator().next();
             if (OBJECT_DOESNOT_EXISTS_ERROR_CODE.equalsIgnoreCase(errorDTO.getErrorCode()))
                 throw new ObjectDoesnotExistsException(errorDTO.getErrorCode(), errorDTO.getMessage());
+            if(blockedValues.contains(errorDTO.getErrorCode()))
+                throw new PacketManagerFailureException(errorDTO.getErrorCode(), errorDTO.getMessage());
             else
                 throw new PacketManagerException(errorDTO.getErrorCode(), errorDTO.getMessage());
         }
@@ -276,7 +298,7 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
         return infoResponseDto;
     }
 
-    public void addOrUpdateTags(String id, Map<String, String> tags) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+    public void addOrUpdateTags(String id, Map<String, String> tags) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
         UpdateTagRequestDto updateTagRequestDto = new UpdateTagRequestDto(id, tags);
 
         RequestWrapper<UpdateTagRequestDto> request = new RequestWrapper<>();
@@ -291,6 +313,8 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
             ErrorDTO errorDTO = response.getErrors().iterator().next();
             if (OBJECT_DOESNOT_EXISTS_ERROR_CODE.equalsIgnoreCase(errorDTO.getErrorCode()))
                 throw new ObjectDoesnotExistsException(errorDTO.getErrorCode(), errorDTO.getMessage());
+            if(blockedValues.contains(errorDTO.getErrorCode()))
+                throw new PacketManagerFailureException(errorDTO.getErrorCode(), errorDTO.getMessage());
             else
                 throw new PacketManagerException(errorDTO.getErrorCode(), errorDTO.getMessage());
         }
@@ -298,7 +322,7 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
 
 	@SuppressWarnings("unchecked")
 	public void deleteTags(String id, List<String> tags)
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException {
+            throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, PacketManagerFailureException {
 		DeleteTagRequestDTO deleteTagREquestDto = new DeleteTagRequestDTO(id, tags);
 		RequestWrapper<DeleteTagRequestDTO> request = new RequestWrapper<>();
 		request.setId(ID);
@@ -315,6 +339,8 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
             ErrorDTO errorDTO = response.getErrors().iterator().next();
             if (OBJECT_DOESNOT_EXISTS_ERROR_CODE.equalsIgnoreCase(errorDTO.getErrorCode()))
                 throw new ObjectDoesnotExistsException(errorDTO.getErrorCode(), errorDTO.getMessage());
+            if(blockedValues.contains(errorDTO.getErrorCode()))
+                throw new PacketManagerFailureException(errorDTO.getErrorCode(), errorDTO.getMessage());
             else
                 throw new PacketManagerException(errorDTO.getErrorCode(), errorDTO.getMessage());
 		}
@@ -322,11 +348,11 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
 
 	}
 
-    public Map<String, String> getAllTags(String id) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+    public Map<String, String> getAllTags(String id) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
         return getTags(id, null);
     }
 
-    public Map<String, String> getTags(String id, List<String> tagNames) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+    public Map<String, String> getTags(String id, List<String> tagNames) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
         TagRequestDto tagRequestDto = new TagRequestDto(id, tagNames);
         RequestWrapper<TagRequestDto> request = new RequestWrapper<>();
         request.setId(ID);
@@ -348,6 +374,8 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
                 ErrorDTO errorDTO = response.getErrors().iterator().next();
                 if (OBJECT_DOESNOT_EXISTS_ERROR_CODE.equalsIgnoreCase(errorDTO.getErrorCode()))
                     throw new ObjectDoesnotExistsException(errorDTO.getErrorCode(), errorDTO.getMessage());
+                if(blockedValues.contains(errorDTO.getErrorCode()))
+                    throw new PacketManagerFailureException(errorDTO.getErrorCode(), errorDTO.getMessage());
                 else
                     throw new PacketManagerException(errorDTO.getErrorCode(), errorDTO.getMessage());
             }

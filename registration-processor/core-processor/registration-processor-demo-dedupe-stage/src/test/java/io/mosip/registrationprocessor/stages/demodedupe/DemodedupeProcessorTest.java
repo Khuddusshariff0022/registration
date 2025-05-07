@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -666,7 +667,7 @@ public class DemodedupeProcessorTest {
 	 * @throws RegistrationProcessorCheckedException
 	 */
 	@Test
-	public void testDemoDedupeFailure() throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException, PacketManagerException {
+	public void testDemoDedupeFailure() throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 		InternalRegistrationStatusDto registrationStatusDto = new InternalRegistrationStatusDto();
 
 		Mockito.when(demoDedupe.performDedupe(anyString())).thenReturn(duplicateDtos);
@@ -694,7 +695,7 @@ public class DemodedupeProcessorTest {
 	 * @throws RegistrationProcessorCheckedException
 	 */
 	@Test
-	public void testResourceException() throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException {
+	public void testResourceException() throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 		when(env.getProperty(DEMODEDUPEENABLE)).thenReturn("true");
 
 		List<DemographicInfoDto> emptyDuplicateDtoSet = new ArrayList<>();
@@ -718,7 +719,7 @@ public class DemodedupeProcessorTest {
 
 	@Test
 	public void testFSAdapterExceptionException()
-			throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException {
+			throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 		Mockito.when(demoDedupe.performDedupe(anyString())).thenReturn(duplicateDtos);
 
 		FSAdapterException exp = new FSAdapterException("errorMessage", "test");
@@ -734,7 +735,7 @@ public class DemodedupeProcessorTest {
 	}
 
 	@Test
-	public void testIllegalArgumentException() throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException {
+	public void testIllegalArgumentException() throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 		Mockito.when(demoDedupe.performDedupe(anyString())).thenReturn(duplicateDtos);
 		IllegalArgumentException exp = new IllegalArgumentException("errorMessage");
 		Mockito.doThrow(exp).when(abisHandlerUtil).getPacketStatus(any());

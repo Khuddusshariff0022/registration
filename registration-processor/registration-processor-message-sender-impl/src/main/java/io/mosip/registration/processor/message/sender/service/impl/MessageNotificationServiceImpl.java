@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import io.mosip.registration.processor.core.exception.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -48,11 +49,6 @@ import io.mosip.registration.processor.core.constant.LoggerFileConstant;
 import io.mosip.registration.processor.core.constant.MappingJsonConstants;
 import io.mosip.registration.processor.core.constant.ProviderStageName;
 import io.mosip.registration.processor.core.constant.VidType;
-import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
-import io.mosip.registration.processor.core.exception.PacketDecryptionFailureException;
-import io.mosip.registration.processor.core.exception.PacketManagerException;
-import io.mosip.registration.processor.core.exception.RegistrationProcessorCheckedException;
-import io.mosip.registration.processor.core.exception.TemplateProcessingFailureException;
 import io.mosip.registration.processor.core.exception.util.PlatformErrorMessages;
 import io.mosip.registration.processor.core.http.RequestWrapper;
 import io.mosip.registration.processor.core.http.ResponseWrapper;
@@ -181,7 +177,7 @@ public class MessageNotificationServiceImpl
 	@Override
 	public SmsResponseDto sendSmsNotification(String templateTypeCode, String id, String process, IdType idType,
 			Map<String, Object> attributes, String regType) throws ApisResourceAccessException, IOException,
-			JSONException, PacketDecryptionFailureException {
+            JSONException, PacketDecryptionFailureException, PacketManagerFailureException {
 		SmsResponseDto response=new SmsResponseDto();
 		SmsRequestDto smsDto = new SmsRequestDto();
 		RequestWrapper<SmsRequestDto> requestWrapper = new RequestWrapper<>();
@@ -312,7 +308,7 @@ public class MessageNotificationServiceImpl
 	}
 
 	private List<String> getPreferredLanguages(String id, String process) throws ApisResourceAccessException,
-	PacketManagerException, JsonProcessingException, IOException {
+            PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
 		if(userPreferredLanguageAttribute!=null && !userPreferredLanguageAttribute.isBlank()) {
 			try {
 				String preferredLang=packetManagerService.getField(id, userPreferredLanguageAttribute, process,
@@ -445,7 +441,7 @@ public class MessageNotificationServiceImpl
 	 */
 	private Map<String, Object> setAttributes(String id, String process, String lang, IdType idType, Map<String, Object> attributes, String regType,
 			StringBuilder phoneNumber, StringBuilder emailId) throws IOException, ApisResourceAccessException,
-			JsonProcessingException, PacketManagerException, JSONException, PacketDecryptionFailureException, JsonParseException, JsonMappingException, io.mosip.kernel.core.exception.IOException {
+            JsonProcessingException, PacketManagerException, JSONException, PacketDecryptionFailureException, JsonParseException, JsonMappingException, io.mosip.kernel.core.exception.IOException, PacketManagerFailureException {
 
 		String uin = "";
 		if (idType.toString().equalsIgnoreCase(UIN)) {
@@ -620,7 +616,7 @@ public class MessageNotificationServiceImpl
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> setAttributesFromIdJson(String id, String process, Map<String, Object> attribute,
 			String regType, String lang, StringBuilder phoneNumber, StringBuilder emailId)
-			throws IOException, ApisResourceAccessException, PacketManagerException, JsonProcessingException, JSONException, PacketDecryptionFailureException, JsonParseException, JsonMappingException, io.mosip.kernel.core.exception.IOException {
+            throws IOException, ApisResourceAccessException, PacketManagerException, JsonProcessingException, JSONException, PacketDecryptionFailureException, JsonParseException, JsonMappingException, io.mosip.kernel.core.exception.IOException, PacketManagerFailureException {
 
 		if (mapperJsonKeys == null) {
 			String mapperJsonString = Utilities.getJson(utility.getConfigServerFileStorageURL(),

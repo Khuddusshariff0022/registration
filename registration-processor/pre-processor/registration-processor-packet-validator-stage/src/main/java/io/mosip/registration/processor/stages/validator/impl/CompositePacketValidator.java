@@ -2,6 +2,7 @@ package io.mosip.registration.processor.stages.validator.impl;
 
 import java.io.IOException;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
@@ -29,7 +30,7 @@ public class CompositePacketValidator implements PacketValidator {
     private PacketValidator referenceValidatorImpl;
 
     @Override
-    public boolean validate(String id, String process, PacketValidationDto packetValidationDto) throws ApisResourceAccessException, RegistrationProcessorCheckedException, IOException, JsonProcessingException, PacketManagerException {
+    public boolean validate(String id, String process, PacketValidationDto packetValidationDto) throws ApisResourceAccessException, RegistrationProcessorCheckedException, IOException, JsonProcessingException, PacketManagerException, PacketManagerFailureException {
         boolean isValid = packetValidatorImpl.validate(id, process, packetValidationDto);
         if (isValid)
             isValid = referenceValidatorImpl.validate(id, process, packetValidationDto);

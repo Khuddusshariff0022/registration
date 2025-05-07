@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.mosip.registration.processor.core.exception.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -37,10 +38,6 @@ import io.mosip.registration.processor.core.constant.LoggerFileConstant;
 import io.mosip.registration.processor.core.constant.MappingJsonConstants;
 import io.mosip.registration.processor.core.constant.ProviderStageName;
 import io.mosip.registration.processor.core.constant.RegistrationType;
-import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
-import io.mosip.registration.processor.core.exception.PacketDecryptionFailureException;
-import io.mosip.registration.processor.core.exception.PacketManagerException;
-import io.mosip.registration.processor.core.exception.RegistrationProcessorCheckedException;
 import io.mosip.registration.processor.core.exception.util.PlatformErrorMessages;
 import io.mosip.registration.processor.core.exception.util.PlatformSuccessMessages;
 import io.mosip.registration.processor.core.logger.LogDescription;
@@ -322,7 +319,7 @@ public class BioDedupeProcessor {
 	 * @throws RegistrationProcessorCheckedException RegistrationProcessorCheckedException
 	 */
 	private void newPacketPreAbisIdentification(InternalRegistrationStatusDto registrationStatusDto, MessageDTO object)
-			throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException {
+			throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 		if (isValidCbeff(object)) {
 			object.setIsValid(Boolean.TRUE);
 			registrationStatusDto.setStatusCode(RegistrationStatusCode.PROCESSING.toString());
@@ -369,7 +366,7 @@ public class BioDedupeProcessor {
 	 * @throws RegistrationProcessorCheckedException
 	 */
 	private void updatePacketPreAbisIdentification(InternalRegistrationStatusDto registrationStatusDto,
-			MessageDTO object) throws IOException, ApisResourceAccessException, PacketManagerException, JsonProcessingException {
+			MessageDTO object) throws IOException, ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException {
 
 		String bioField = priorityBasedPacketManagerService.getFieldByMappingJsonKey(registrationStatusDto.getRegistrationId(),
 				MappingJsonConstants.INDIVIDUAL_BIOMETRICS, registrationStatusDto.getRegistrationType(), ProviderStageName.BIO_DEDUPE);
@@ -413,7 +410,7 @@ public class BioDedupeProcessor {
 	 */
 	private void postAbisIdentification(InternalRegistrationStatusDto registrationStatusDto, MessageDTO object,
 			String registrationType) throws ApisResourceAccessException, IOException,
-			io.mosip.kernel.core.exception.IOException, JsonProcessingException, PacketManagerException {
+			io.mosip.kernel.core.exception.IOException, JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 		String moduleId = "";
 		String moduleName = ModuleName.BIO_DEDUPE.toString();
 		Set<String> matchedRegIds = abisHandlerUtil.getUniqueRegIds(registrationStatusDto.getRegistrationId(),
@@ -469,7 +466,7 @@ public class BioDedupeProcessor {
 	 * @throws RegistrationProcessorCheckedException RegistrationProcessorCheckedException
 	 */
 	private Boolean isValidCbeff(MessageDTO messageDTO) throws ApisResourceAccessException,
-			IOException, JsonProcessingException, PacketManagerException {
+			IOException, JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 		String id = messageDTO.getRid();
 		String process = messageDTO.getReg_type();
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
@@ -493,7 +490,7 @@ public class BioDedupeProcessor {
 
 	}
 
-	private boolean infantCheck(String registrationId, String registrationType) throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException {
+	private boolean infantCheck(String registrationId, String registrationType) throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, PacketManagerFailureException, IOException {
 		boolean isInfant = false;
 		if (RegistrationType.NEW.name().equalsIgnoreCase(registrationType)) {
 			int age = utilities.getApplicantAge(registrationId, registrationType, ProviderStageName.BIO_DEDUPE);
@@ -521,7 +518,7 @@ public class BioDedupeProcessor {
 	}
 
 	private void lostPacketPostAbisIdentification(InternalRegistrationStatusDto registrationStatusDto,
-			MessageDTO object, Set<String> matchedRegIds) throws IOException, ApisResourceAccessException, JsonProcessingException, PacketManagerException {
+			MessageDTO object, Set<String> matchedRegIds) throws IOException, ApisResourceAccessException, JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 		String moduleId = "";
 		String moduleName = ModuleName.BIO_DEDUPE.toString();
 		String registrationId = registrationStatusDto.getRegistrationId();
@@ -596,7 +593,7 @@ public class BioDedupeProcessor {
 	}
 
 	private int addMactchedRefId(String id, String process, JSONObject matchedDemographicIdentity, int matchCount, List<String> demoMatchedIds,
-			String matchedRegId) throws IOException, ApisResourceAccessException, PacketManagerException, JsonProcessingException {
+			String matchedRegId) throws IOException, ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException {
 		if (matchedDemographicIdentity != null) {
 			Map<String, String> matchedAttribute = getIdJson(matchedDemographicIdentity);
 			if (!matchedAttribute.isEmpty()) {
@@ -610,7 +607,7 @@ public class BioDedupeProcessor {
 		return matchCount;
 	}
 
-	private boolean compareDemoDedupe(String id, String process, Map<String, String> matchedAttribute) throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException {
+	private boolean compareDemoDedupe(String id, String process, Map<String, String> matchedAttribute) throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, JsonProcessingException {
 		boolean isMatch = false;
 
 		for (String key : matchedAttribute.keySet()) {

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -318,7 +319,7 @@ public class WorkflowActionService {
 
 
 	private void addRuleIdsToTag(InternalRegistrationStatusDto internalRegistrationStatusDto)
-			throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException
+			throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, PacketManagerFailureException, IOException
 			{
 		String pauseRuleIds = internalRegistrationStatusDto.getPauseRuleIds();
 		if (StringUtils.isEmpty(pauseRuleIds))

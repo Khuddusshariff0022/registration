@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -719,7 +720,7 @@ public class AbisHandlerStage extends MosipVerticleAPIManager {
 	}
 
 	private BiometricRecord filterExceptionBiometrics(BiometricRecord biometricRecord, String id, String process)
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException,
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException,
 			JSONException
 	{
 

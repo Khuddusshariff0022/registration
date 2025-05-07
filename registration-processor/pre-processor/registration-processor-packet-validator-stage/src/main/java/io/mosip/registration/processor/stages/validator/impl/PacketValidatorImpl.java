@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,8 +79,8 @@ public class PacketValidatorImpl implements PacketValidator {
 
 	@Override
 	public boolean validate(String id, String process, PacketValidationDto packetValidationDto)
-			throws ApisResourceAccessException, RegistrationProcessorCheckedException, IOException,
-			JsonProcessingException, PacketManagerException {
+            throws ApisResourceAccessException, RegistrationProcessorCheckedException, IOException,
+            JsonProcessingException, PacketManagerException, PacketManagerFailureException {
 		String uin = null;
 		try {
 			ValidatePacketResponse response = packetManagerService.validate(id, process,
@@ -179,8 +180,8 @@ public class PacketValidatorImpl implements PacketValidator {
 	}
 
 	private boolean biometricsXSDValidation(String id, String process, PacketValidationDto packetValidationDto)
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException,
-			RegistrationProcessorCheckedException, JSONException {
+            throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException,
+            RegistrationProcessorCheckedException, JSONException, PacketManagerFailureException {
 		List<String> fields = Arrays.asList(MappingJsonConstants.INDIVIDUAL_BIOMETRICS,
 				MappingJsonConstants.AUTHENTICATION_BIOMETRICS, MappingJsonConstants.INTRODUCER_BIO,
 				MappingJsonConstants.OFFICERBIOMETRICFILENAME, MappingJsonConstants.SUPERVISORBIOMETRICFILENAME);
@@ -264,7 +265,7 @@ public class PacketValidatorImpl implements PacketValidator {
 
 	private boolean applicantDocumentValidation(String registrationId, String process,
 			PacketValidationDto packetValidationDto)
-			throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException {
+            throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException, PacketManagerFailureException {
 		String validateApplicant=env.getProperty(VALIDATEAPPLICANTDOCUMENT);
 		if (validateApplicant!=null && validateApplicant.trim().equalsIgnoreCase(VALIDATIONFALSE))
 			return true;
@@ -283,7 +284,7 @@ public class PacketValidatorImpl implements PacketValidator {
 	}
 	
 	private boolean checkConsentForPacket(String id, String process, ProviderStageName stageName)
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+            throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
 
 		String val = packetManagerService.getField(id, MappingJsonConstants.CONSENT, process, stageName);
 		if (null!=val && StringUtils.isNotEmpty(val)) {

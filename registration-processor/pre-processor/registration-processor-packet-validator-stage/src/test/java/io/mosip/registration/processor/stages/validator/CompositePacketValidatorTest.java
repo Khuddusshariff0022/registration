@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
 import java.io.IOException;
+
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -37,7 +39,7 @@ public class CompositePacketValidatorTest {
 
 	@Test
 	public void validateSuccessTest() throws ApisResourceAccessException, RegistrationProcessorCheckedException,
-			JsonProcessingException, PacketManagerException, IOException {
+            JsonProcessingException, PacketManagerException, IOException, PacketManagerFailureException {
 
 		Mockito.when(packetValidatorImpl.validate(anyString(), anyString(), any())).thenReturn(true);
 		Mockito.when(referenceValidatorImpl.validate(anyString(), anyString(), any())).thenReturn(true);
@@ -47,7 +49,7 @@ public class CompositePacketValidatorTest {
 
 	@Test
 	public void validateFailureTest() throws ApisResourceAccessException, RegistrationProcessorCheckedException,
-			JsonProcessingException, PacketManagerException, IOException {
+            JsonProcessingException, PacketManagerException, IOException, PacketManagerFailureException {
 
 		Mockito.when(packetValidatorImpl.validate(anyString(), anyString(), any())).thenReturn(false);
 		boolean result = compositePacketValidator.validate("10011100120000620210727102631", "NEW", packetValidationDto);

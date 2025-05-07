@@ -12,6 +12,7 @@ import io.mosip.registration.processor.biodedupe.stage.exception.CbeffNotFoundEx
 import io.mosip.registration.processor.core.constant.MappingJsonConstants;
 import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
 import io.mosip.registration.processor.core.exception.PacketManagerException;
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import io.mosip.registration.processor.packet.storage.utils.PriorityBasedPacketManagerService;
 import io.mosip.registration.processor.packet.storage.utils.Utilities;
 import org.assertj.core.util.Lists;
@@ -48,7 +49,7 @@ public class CbeffValidateAndVerificatonServiceTest {
     private PriorityBasedPacketManagerService priorityBasedPacketManagerService;
 
     @Before
-    public void setup() throws IOException, PacketManagerException, ApisResourceAccessException, JsonProcessingException {
+    public void setup() throws IOException, PacketManagerException, ApisResourceAccessException, JsonProcessingException, PacketManagerFailureException {
 
         ReflectionTestUtils.setField(service, "policyId", "mpolicy-default-abis");
         ReflectionTestUtils.setField(service, "subscriberId", "mpartner-default-abis");
@@ -96,7 +97,7 @@ public class CbeffValidateAndVerificatonServiceTest {
     }
 
     @Test(expected = CbeffNotFoundException.class)
-    public void validateBiometricsTest() throws PacketManagerException, ApisResourceAccessException, IOException, JsonProcessingException {
+    public void validateBiometricsTest() throws PacketManagerException, ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerFailureException {
         service.validateBiometrics(id, process);
     }
 

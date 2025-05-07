@@ -10,6 +10,7 @@ import java.util.Map;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.JsonUtils;
 import io.mosip.registration.processor.core.constant.LoggerFileConstant;
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import io.mosip.registration.processor.core.logger.RegProcessorLogger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,7 +65,7 @@ public class BiometricsSignatureValidator {
 
 	public void validateSignature(String id, String process, BiometricRecord biometricRecord,
 			Map<String, String> metaInfoMap) throws JSONException, BiometricSignatureValidationException,
-			ApisResourceAccessException, PacketManagerException, IOException, io.mosip.kernel.core.util.exception.JsonProcessingException {
+			ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, IOException, io.mosip.kernel.core.util.exception.JsonProcessingException {
 
 		// backward compatibility check
 		String version = getRegClientVersionFromMetaInfo(id, process, metaInfoMap);

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +51,7 @@ public class CbeffValidateAndVerificatonService {
 
 
     public void validateBiometrics(String id, String process)
-            throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException {
+            throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, JsonProcessingException {
     	regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
 				id, "CbeffValidateAndVerificatonService::validateBiometrics()::entry");
         JSONObject regProcessorIdentityJson = utilities.getRegistrationProcessorMappingJson(MappingJsonConstants.IDENTITY);

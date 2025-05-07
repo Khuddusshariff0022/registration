@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -603,7 +604,7 @@ public class UinGeneratorStage extends MosipVerticleAPIManager {
 	}
 
 	private Documents getIdDocumnet(String registrationId, String dockey, String process)
-			throws IOException, ApisResourceAccessException, PacketManagerException, io.mosip.kernel.core.util.exception.JsonProcessingException {
+			throws IOException, ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, io.mosip.kernel.core.util.exception.JsonProcessingException {
 		Documents documentsInfoDto = new Documents();
 
 		Document document =
@@ -1028,7 +1029,7 @@ public class UinGeneratorStage extends MosipVerticleAPIManager {
 	@SuppressWarnings("unchecked")
 	private IdResponseDTO lostAndUpdateUin(String lostPacketRegId, String matchedRegId, String process, MessageDTO object,
 			LogDescription description) throws ApisResourceAccessException, IOException,
-			io.mosip.kernel.core.util.exception.JsonProcessingException, PacketManagerException, IdrepoDraftException,
+			io.mosip.kernel.core.util.exception.JsonProcessingException, PacketManagerException, PacketManagerFailureException, IdrepoDraftException,
 			IdrepoDraftReprocessableException {
 
 		IdResponseDTO idResponse = null;

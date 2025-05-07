@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import io.mosip.registration.processor.core.exception.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,12 +31,6 @@ import io.mosip.registration.processor.core.constant.JsonConstant;
 import io.mosip.registration.processor.core.constant.MappingJsonConstants;
 import io.mosip.registration.processor.core.constant.ProviderStageName;
 import io.mosip.registration.processor.core.constant.RegistrationType;
-import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
-import io.mosip.registration.processor.core.exception.IntroducerOnHoldException;
-import io.mosip.registration.processor.core.exception.PacketDecryptionFailureException;
-import io.mosip.registration.processor.core.exception.PacketManagerException;
-import io.mosip.registration.processor.core.exception.RegistrationProcessorCheckedException;
-import io.mosip.registration.processor.core.exception.ValidationFailedException;
 import io.mosip.registration.processor.core.logger.RegProcessorLogger;
 import io.mosip.registration.processor.core.packet.dto.FieldValue;
 import io.mosip.registration.processor.core.status.util.StatusUtil;
@@ -263,7 +258,7 @@ public class IntroducerValidator {
 	}
 
 	private BiometricRecord filterExceptionBiometrics(BiometricRecord biometricRecord, String id, String process)
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException,
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException,
 			JSONException {
 		String version = getRegClientVersionFromMetaInfo(id, process,
 				packetManagerService.getMetaInfo(id, process, ProviderStageName.INTRODUCER_VALIDATOR));

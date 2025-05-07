@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.apache.commons.collections.map.HashedMap;
 import org.json.JSONException;
 import org.junit.Before;
@@ -419,7 +420,7 @@ public class WorkflowInternalActionVerticleTest {
 	}
 	@Test
 	public void testProcessSuccessForRestartParentFlow() throws WorkflowActionException, ApisResourceAccessException,
-			PacketManagerException, JsonProcessingException, IOException {
+            PacketManagerException, JsonProcessingException, IOException, PacketManagerFailureException {
 		WorkflowInternalActionDTO workflowInternalActionDTO = new WorkflowInternalActionDTO();
 		workflowInternalActionDTO.setRid("10006100390000920200603070407");
 		workflowInternalActionDTO.setActionCode(WorkflowInternalActionCode.RESTART_PARENT_FLOW.toString());
@@ -446,7 +447,7 @@ public class WorkflowInternalActionVerticleTest {
 
 	@Test
 	public void testProcessSuccessForCompleteAsProcessedForAdditionalInfoWorkflow()
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException,
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException,
 			WorkflowActionException {
 		WorkflowInternalActionDTO workflowInternalActionDTO = new WorkflowInternalActionDTO();
 		workflowInternalActionDTO.setRid("10006100390000920200603070407");
@@ -480,7 +481,7 @@ public class WorkflowInternalActionVerticleTest {
 
 	@Test
 	public void testProcessSuccessForCompleteAsRejectedForAdditionalInfoWorkflow()
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException,
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException,
 			WorkflowActionException {
 		WorkflowInternalActionDTO workflowInternalActionDTO = new WorkflowInternalActionDTO();
 		workflowInternalActionDTO.setRid("10006100390000920200603070407");
@@ -514,7 +515,7 @@ public class WorkflowInternalActionVerticleTest {
 
 	@Test
 	public void testProcessSuccessForCompleteAsFailedForAdditionalInfoWorkflow()
-			throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException,
+			throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException,
 			WorkflowActionException {
 		WorkflowInternalActionDTO workflowInternalActionDTO = new WorkflowInternalActionDTO();
 		workflowInternalActionDTO.setRid("10006100390000920200603070407");
@@ -549,7 +550,7 @@ public class WorkflowInternalActionVerticleTest {
 
 	@Test
 	public void testProcessSuccessForPauseAndRequestAdditionalInfoForAdditionalInfoWorkflow() throws WorkflowActionException,
-			ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
+			ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, IOException {
 		WorkflowInternalActionDTO workflowInternalActionDTO = new WorkflowInternalActionDTO();
 		workflowInternalActionDTO.setRid("10006100390000920200603070407");
 		workflowInternalActionDTO

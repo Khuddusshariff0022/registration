@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import io.mosip.registration.processor.core.packet.dto.AdditionalInfoRequestDto;
 import io.mosip.registration.processor.packet.storage.exception.ObjectDoesnotExistsException;
 import io.mosip.registration.processor.packet.storage.utils.OSIUtils;
@@ -149,8 +150,8 @@ public class DeviceValidator {
 	}
 
 	private String getOperationsDataFromMetaInfo(String id, String process, String fileName)
-			throws ApisResourceAccessException, PacketManagerException, IOException, JSONException, JsonParseException,
-			JsonMappingException, JsonProcessingException, io.mosip.kernel.core.util.exception.JsonProcessingException {
+            throws ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, IOException, JSONException, JsonParseException,
+            JsonMappingException, JsonProcessingException, io.mosip.kernel.core.util.exception.JsonProcessingException, PacketManagerFailureException {
 		Map<String, String> metaInfoMap = packetManagerService.getMetaInfo(id, process,
 				ProviderStageName.PACKET_VALIDATOR);
 		String metadata = metaInfoMap.get(JsonConstant.OPERATIONSDATA);
@@ -239,7 +240,7 @@ public class DeviceValidator {
 	 * @throws io.mosip.kernel.core.util.exception.JsonProcessingException
 	 * @throws JSONException
 	 */
-	private String getCorrectionPacketDateTime(String rid) throws ApisResourceAccessException, IOException, PacketManagerException, io.mosip.kernel.core.util.exception.JsonProcessingException, JSONException {
+	private String getCorrectionPacketDateTime(String rid) throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, io.mosip.kernel.core.util.exception.JsonProcessingException, JSONException {
 		String process = getCorrectionPacketProcess(rid);
 		if (process != null) {
 			try {

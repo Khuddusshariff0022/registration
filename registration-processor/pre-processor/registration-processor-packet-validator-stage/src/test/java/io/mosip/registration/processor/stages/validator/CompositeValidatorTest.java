@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -34,7 +35,7 @@ public class CompositeValidatorTest {
 	 private PacketValidator referenceValidatorImpl;
 	 
 	 @Test
-	 public void validateTest() throws ApisResourceAccessException, RegistrationProcessorCheckedException, JsonProcessingException, PacketManagerException, IOException {
+	 public void validateTest() throws ApisResourceAccessException, RegistrationProcessorCheckedException, JsonProcessingException, PacketManagerException, IOException, PacketManagerFailureException {
 		 Mockito.when(packetValidatorImpl.validate(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(true);
 		 Mockito.when(referenceValidatorImpl.validate(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(true);
 		 assertTrue(compositePacketValidator.validate("1234", "NEW", new PacketValidationDto()));

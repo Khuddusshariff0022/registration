@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.registration.processor.core.exception.PacketManagerFailureException;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 import org.junit.Before;
@@ -355,7 +356,7 @@ public class QualityClassifierStageTest {
 
 	@Test
 	public void testQualityClassifierAllGoodTags() throws ApisResourceAccessException, IOException,
-			PacketManagerException, JsonProcessingException, BiometricException {
+            PacketManagerException, JsonProcessingException, BiometricException, PacketManagerFailureException {
 
 		when(basedPacketManagerService.getBiometricsByMappingJsonKey(any(), any(), any(), any()))
 				.thenReturn(getMockBiometricRecord());
@@ -477,7 +478,7 @@ public class QualityClassifierStageTest {
 
 	@Test
 	public void testCbeffNotFound()
-			throws IOException, PacketManagerException, JsonProcessingException, ApisResourceAccessException {
+			throws IOException, PacketManagerException, PacketManagerFailureException, JsonProcessingException, ApisResourceAccessException {
 		when(basedPacketManagerService.getBiometricsByMappingJsonKey(any(), any(), any(), any()))
 				.thenThrow(new IOException("message"));
 		Mockito.when(registrationStatusMapperUtil.getStatusCode(RegistrationExceptionTypeCode.IOEXCEPTION))
@@ -491,7 +492,7 @@ public class QualityClassifierStageTest {
 
 	@Test
 	public void testApiNotAccessibleTest()
-			throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException {
+			throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, JsonProcessingException {
 		when(basedPacketManagerService.getBiometricsByMappingJsonKey(any(), any(), any(), any()))
 				.thenThrow(new ApisResourceAccessException("message"));
 		Mockito.when(registrationStatusMapperUtil.getStatusCode(RegistrationExceptionTypeCode.APIS_RESOURCE_ACCESS_EXCEPTION))
@@ -506,7 +507,7 @@ public class QualityClassifierStageTest {
 
 	@Test
 	public void testFileNameMissing()
-			throws IOException, ApisResourceAccessException, PacketManagerException, JsonProcessingException {
+			throws IOException, ApisResourceAccessException, PacketManagerException, PacketManagerFailureException, JsonProcessingException {
 		when(basedPacketManagerService.getBiometricsByMappingJsonKey(any(), any(), any(), any())).thenReturn(null)
 				.thenReturn(null);
 		when(registrationStatusMapperUtil.getStatusCode(RegistrationExceptionTypeCode.BIOMETRIC_EXCEPTION))
@@ -548,7 +549,7 @@ public class QualityClassifierStageTest {
 
 	@Test
 	public void testFileMissing()
-			throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException {
+			throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, JsonProcessingException {
 		Mockito.when(registrationStatusService.getRegistrationStatus(any(), any(), any(), any())).thenReturn(registrationStatusDto);
 		when(basedPacketManagerService.getBiometricsByMappingJsonKey(anyString(), any(), any(), any()))
 				.thenReturn(null);
@@ -564,7 +565,7 @@ public class QualityClassifierStageTest {
 
 	@Test
 	public void testBioetricFileNotPresentInIdObject()
-			throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException {
+			throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, JsonProcessingException {
 
 		when(basedPacketManagerService.getFieldByMappingJsonKey(any(), any(), any(), any())).thenReturn(null);
 
@@ -578,7 +579,7 @@ public class QualityClassifierStageTest {
 
 	@Test
 	public void testNoBiometricInPacket()
-			throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException {
+			throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, JsonProcessingException {
 
 		when(basedPacketManagerService.getBiometricsByMappingJsonKey(any(), any(), any(), any())).thenReturn(null);
 		when(registrationStatusMapperUtil.getStatusCode(RegistrationExceptionTypeCode.BIOMETRIC_EXCEPTION))
@@ -592,7 +593,7 @@ public class QualityClassifierStageTest {
 
 	@Test
 	public void testJsonProcessingException()
-			throws ApisResourceAccessException, IOException, PacketManagerException, JsonProcessingException {
+			throws ApisResourceAccessException, IOException, PacketManagerException, PacketManagerFailureException, JsonProcessingException {
 		when(basedPacketManagerService.getBiometricsByMappingJsonKey(any(), any(), any(), any()))
 				.thenThrow(new JsonProcessingException("Json exception"));
 		Mockito.when(registrationStatusService.getRegistrationStatus(anyString(), any(), any(), any())).thenReturn(registrationStatusDto);
