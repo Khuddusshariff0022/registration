@@ -57,7 +57,7 @@ public class PacketManagerService extends PriorityBasedPacketManagerService {
     private static final String OBJECT_DOESNOT_EXISTS_ERROR_CODE = "KER-PUT-027";
 
 
-    @Value("#{'${mosip.registration.processor.packet.manager.failed.response.codes}'.split(',')}")
+    @Value("#{'${mosip.registration.processor.packet.manager.failed.response.codes: KER-PUT-019,KER-PUT-010}'.split(',')}")
     private List<String> blockedValues;
 
     @Autowired
