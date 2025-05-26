@@ -2,6 +2,7 @@ package io.mosip.registration.processor.packet.manager.idreposervice;
 
 import java.io.IOException;
 
+import io.mosip.registration.processor.core.idrepo.RidDto;
 import org.json.simple.JSONObject;
 
 import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
@@ -76,6 +77,19 @@ public interface IdRepoService {
 	 */
 	ResponseDTO getIdResponseFromIDRepo(String machedRegId) throws IOException, ApisResourceAccessException;
 
+
+	/**
+	 * Gets the uin by rid.
+	 *
+	 * @param uin
+	 *            the uin provided
+	 * @return the rid by uin
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws ApisResourceAccessException
+	 *             the apis resource access exception
+	 */
+	RidDto getRidByIndividualId(String uin) throws IOException, ApisResourceAccessException;
 
 
 }

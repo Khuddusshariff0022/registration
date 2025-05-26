@@ -8,11 +8,15 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 import io.mosip.kernel.biometrics.entities.BIR;
 import io.mosip.kernel.biometrics.entities.BiometricRecord;
 import io.mosip.kernel.core.bioapi.exception.BiometricException;
+import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.registration.processor.core.constant.JsonConstant;
 import io.mosip.registration.processor.core.idrepo.dto.Documents;
 import io.mosip.registration.processor.core.idrepo.dto.IdResponseDTO;
 import io.mosip.registration.processor.packet.storage.entity.BasePacketEntity;
@@ -177,6 +181,9 @@ public class Utilities {
 
     @Autowired
     private PacketManagerService packetManagerService;
+
+	@Autowired
+	private  PriorityBasedPacketManagerService priorityBasedPacketManagerService;
 
 	/** The Constant INBOUNDQUEUENAME. */
 	private static final String INBOUNDQUEUENAME = "inboundQueueName";
@@ -756,4 +763,30 @@ public class Utilities {
 		String machineId = id.substring(centerIdLength, centerIdLength + machineIdLength);
 		return centerId + "_" + machineId;
 	}
+
+	public LocalDateTime getPacketCreatedDateFromPacketManager(String rid, String process, ProviderStageName stageName) throws PacketManagerException, ApisResourceAccessException, IOException, JsonProcessingException {
+		try {
+			Map<String, String> metaInfo = priorityBasedPacketManagerService.getMetaInfo(
+					rid, process, stageName);
+			String packetCreatedDateTime = metaInfo.get(JsonConstant.CREATIONDATE);
+			if (packetCreatedDateTime != null && !packetCreatedDateTime.isEmpty()) {
+				LocalDateTime dateTime = DateUtils.parseToLocalDateTime(packetCreatedDateTime);
+				return dateTime;
+			} else {
+				regProcLogger.warn(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
+						" -- " + rid,
+						PlatformErrorMessages.RPR_PVM_PACKET_CREATED_DATE_TIME_EMPTY_OR_NULL.getMessage());
+			}
+		} catch (DateTimeParseException e) {
+			regProcLogger.warn(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
+					" -- " + rid,
+					PlatformErrorMessages.RPR_PVM_PACKET_CREATED_DATE_TIME_PARSE_EXCEPTION.getMessage() + e.getMessage());
+		}catch (IllegalArgumentException ex)
+		{
+			regProcLogger.warn(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
+					" -- " +rid,
+					PlatformErrorMessages.RPR_PVM_INVALID_ARGUMENT_EXCEPTION.getMessage() + ex.getMessage());
+		}
+		return null;
+    }
 }

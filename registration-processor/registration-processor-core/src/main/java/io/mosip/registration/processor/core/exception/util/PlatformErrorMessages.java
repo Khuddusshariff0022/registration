@@ -621,6 +621,8 @@ public enum PlatformErrorMessages {
 	RPR_BIO_BIOMETRIC_INSERTION_TO_ABIS(PlatformConstants.RPR_BIO_DEDUPE_SERVICE_MODULE + "003",
 			"Biometric Insertion Failed in ABIS"),
 
+	RPR_BIO_DEDUPE_NO_BIOMETRIC_FOUND(PlatformConstants.RPR_BIO_DEDUPE_STAGE_MODULE + "004",
+			"Not Even Single Match Found for Biometric from ABIS"),
 
 	/** The rpr abis internal error. */
 	RPR_ABIS_INTERNAL_ERROR(PlatformConstants.RPR_BIO_DEDUPE_SERVICE_MODULE + "004", "ABIS Internal Error Occurred"),
@@ -917,6 +919,10 @@ public enum PlatformErrorMessages {
 	RPR_BDD_UNABLE_TO_SERVE_REQUEST(PlatformConstants.RPR_BIO_DEDUPE_SERVICE_MODULE + "004",
 			"ABIS for the Reference ID and Request ID was Unable to Execute the Request"),
 
+	/** The rpr bdd packet created date null. */
+	RPR_BDD_PACKET_CREATED_DATE_NULL(PlatformConstants.RPR_BIO_DEDUPE_SERVICE_MODULE + "005",
+			"Packet Created Date is Null"),
+
 	/** The unknown exception. */
 	UNKNOWN_EXCEPTION(PlatformConstants.RPR_BIO_DEDUPE_SERVICE_MODULE + "005",
 			"un expected exception occured in biodedupe service"),
@@ -966,6 +972,8 @@ public enum PlatformErrorMessages {
 
 	/** The rpr mvs file not present. */
 	RPR_BDD_FILE_NOT_PRESENT(PlatformConstants.RPR_BIO_DEDUPE_SERVICE_MODULE + "011", "Requested file is not present"),
+	/** The rpr bdd invalid age. */
+	RPR_BDD_INVALID_AGE(PlatformConstants.RPR_BIO_DEDUPE_SERVICE_MODULE + "012", "Invalid Age"),
 
 	/** *** System Exception ****. */
 

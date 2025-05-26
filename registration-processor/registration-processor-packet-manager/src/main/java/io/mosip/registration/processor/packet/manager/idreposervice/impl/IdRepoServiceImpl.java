@@ -8,6 +8,7 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.mosip.kernel.biometrics.entities.BiometricRecord;
 import io.mosip.kernel.core.util.CryptoUtil;
+import io.mosip.registration.processor.core.idrepo.RidDto;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -200,25 +201,23 @@ public class IdRepoServiceImpl implements IdRepoService {
 	}
 
 
-//    public BiometricRecord getIdResponseFromIDRepoWithType(String uin, String type) throws JsonProcessingException {
-//        regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
-//                uin, "IdRepoServiceImpl::getBiometricsFromIdrRepoByUin()::entry");
-//        ResponseDTO responseDTO=null;
-//        List<String> pathSegments1 = new ArrayList<>();
-//        pathSegments1.add(uin);
-//        @SuppressWarnings("unchecked")
-//        ResponseWrapper<ResponseDTO> response=(ResponseWrapper<ResponseDTO>) restClientService.getApi(ApiName.IDREPOGETIDBYUIN, pathSegments1, "type", type,
-//                ResponseWrapper.class);
-//
-//        if (response.getResponse() != null) {
-//            responseDTO=mapper.readValue(mapper.writeValueAsString(response.getResponse()), ResponseDTO.class);
-//
-//        }
-//        String data =responseDTO.getDocuments().get("value");
-//        byte[] bio= CryptoUtil.decodeURLSafeBase64(data);
-//        regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
-//                uin, "IdRepoServiceImpl::getBiometricsFromIdrRepoByUin()::exit");
-//
-//        return new ByteArrayInputStream(bio);
-//    }
+	@Override
+	public RidDto getRidByIndividualId(String uin) throws IOException, ApisResourceAccessException {
+		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
+				uin, "IdRepoServiceImpl::getRidbyIndividualId()::entry");
+		RidDto ridDto=null;
+		List<String> pathSegments1 = new ArrayList<>();
+		pathSegments1.add(uin);
+		@SuppressWarnings("unchecked")
+		ResponseWrapper<ResponseDTO> response=(ResponseWrapper<ResponseDTO>) restClientService.getApi(ApiName.GETINDIVIDUALIDFROMUSERID, pathSegments1, "type", "ALL",
+				ResponseWrapper.class);
+
+		if (response.getResponse() != null) {
+			ridDto=mapper.readValue(mapper.writeValueAsString(response.getResponse()), RidDto.class);
+		}
+		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
+				uin, "IdRepoServiceImpl::getRidbyIndividualId()::exit");
+
+		return ridDto;
+	}
 }

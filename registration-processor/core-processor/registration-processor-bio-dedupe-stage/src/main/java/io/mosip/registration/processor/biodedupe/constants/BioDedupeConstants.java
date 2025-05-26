@@ -39,6 +39,10 @@ public class BioDedupeConstants {
 	public static final String FOUND_UIN_IN_DEMO_CHECK = "Found a matching UIN in demo check for the lost packet ";
 	
 	public static final String MULTIPLE_RID_FOUND = "Multiple matched regId found, saving data in manual verification";
+
+	public static final String NO_BIOMETRIC_FOUND = "Not Even Single Match Found for Biometric from Abis";
+
+	public static final String ALL_BIOMETRIC_EXCEPTION = "All Biometric Having Exception";
 	
 	/** The Constant INTERNAL_ERROR. */
 	private static final String INTERNAL_ERROR = "Internal error occurred in bio-dedupe stage while processing for registrationId ";

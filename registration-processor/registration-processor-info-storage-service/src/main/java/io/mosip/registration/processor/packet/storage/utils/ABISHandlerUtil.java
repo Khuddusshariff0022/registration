@@ -8,10 +8,9 @@ import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.registration.processor.core.code.AbisStatusCode;
 import io.mosip.registration.processor.core.constant.ProviderStageName;
 import io.mosip.registration.processor.core.exception.PacketManagerException;
-import io.mosip.registration.processor.core.packet.dto.abis.UniqueRegIdsMethodResponse;
+import io.mosip.registration.processor.core.packet.dto.abis.UniqueRegIdsResponse;
 import io.mosip.registration.processor.status.code.RegistrationStatusCode;
 import io.mosip.registration.processor.status.entity.RegistrationStatusEntity;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -77,8 +76,8 @@ public class ABISHandlerUtil {
 	 *                                               has occurred.
 	 * @throws                                       io.mosip.kernel.core.exception.IOException
 	 */
-	public UniqueRegIdsMethodResponse getUniqueRegIds(String registrationId, String registrationType,
-                                                      int iteration, String workflowInstanceId, ProviderStageName stageName) throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException {
+	public UniqueRegIdsResponse getUniqueRegIds(String registrationId, String registrationType,
+												int iteration, String workflowInstanceId, ProviderStageName stageName) throws ApisResourceAccessException, JsonProcessingException, PacketManagerException, IOException {
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.USERID.toString(),
 				registrationId, "ABISHandlerUtil::getUniqueRegIds()::entry");
 		
@@ -88,15 +87,15 @@ public class ABISHandlerUtil {
 
 		List<String> machedRefIds = new ArrayList<>();
 		Set<String> uniqueRIDs = new HashSet<>();
-        UniqueRegIdsMethodResponse uniqueRegIdsMethodResponse=new UniqueRegIdsMethodResponse();
+        UniqueRegIdsResponse uniqueRegIdsResponse =new UniqueRegIdsResponse();
 		List<AbisResponseDetDto> abisResponseDetDtoList = new ArrayList<>();
 
 		if (!regBioRefIds.isEmpty()) {
 			List<AbisResponseDto> abisResponseDtoList = packetInfoManager.getAbisResponseRecords(regBioRefIds.get(0),
 					latestTransactionId, AbisConstant.IDENTIFY);
             if (abisResponseDtoList.isEmpty()){
-                uniqueRegIdsMethodResponse.setIsResponceNull(true);
-                return uniqueRegIdsMethodResponse;
+                uniqueRegIdsResponse.setIsResponceNull(true);
+                return uniqueRegIdsResponse;
             }
 			for (AbisResponseDto abisResponseDto : abisResponseDtoList) {
 				abisResponseDetDtoList.addAll(packetInfoManager.getAbisResponseDetails(abisResponseDto.getId()));
@@ -138,8 +137,8 @@ public class ABISHandlerUtil {
 
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.USERID.toString(),
 				registrationId, "ABISHandlerUtil::getUniqueRegIds()::exit");
-		uniqueRegIdsMethodResponse.setResponse(uniqueRIDs);
-		return uniqueRegIdsMethodResponse;
+		uniqueRegIdsResponse.setResponse(uniqueRIDs);
+		return uniqueRegIdsResponse;
 
 	}
 

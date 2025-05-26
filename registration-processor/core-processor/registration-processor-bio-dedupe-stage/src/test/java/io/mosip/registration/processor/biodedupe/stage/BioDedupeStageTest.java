@@ -6,6 +6,7 @@ package io.mosip.registration.processor.biodedupe.stage;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
+import io.vertx.core.http.HttpServer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -136,14 +137,19 @@ public class BioDedupeStageTest {
 		ReflectionTestUtils.setField(bioDedupeStage, "workerPoolSize", 10);
 		ReflectionTestUtils.setField(bioDedupeStage, "messageExpiryTimeLimit", Long.valueOf(0));
 		ReflectionTestUtils.setField(bioDedupeStage, "clusterManagerUrl", "/dummyPath");
-		
-		//Mockito.when(environment.getProperty("mosip.kernel.virus-scanner.port")).thenReturn("8000");
-		//Mockito.when(environment.getProperty("server.servlet.path")).thenReturn("/test");
+		// Mock Vertx and HttpServer
+		Vertx vertxMock = Mockito.mock(Vertx.class);
+		HttpServer httpServerMock = Mockito.mock(HttpServer.class);
+		Mockito.when(vertxMock.createHttpServer()).thenReturn(httpServerMock);
+		// Add this to ensure requestHandler returns the HttpServer mock
+		Mockito.when(httpServerMock.requestHandler(any())).thenReturn(httpServerMock);
+		// Inject the mocked Vertx into bioDedupeStage
+		ReflectionTestUtils.setField(bioDedupeStage, "vertx", vertxMock);
+
 		bioDedupeStage.deployVerticle();
 		Mockito.doNothing().when(router).setRoute(any());
 		Router r = new RouterImpl(Vertx.vertx());
 		Mockito.when(router.getRouter()).thenReturn(r);
 		bioDedupeStage.start();
 	}
-
 }
