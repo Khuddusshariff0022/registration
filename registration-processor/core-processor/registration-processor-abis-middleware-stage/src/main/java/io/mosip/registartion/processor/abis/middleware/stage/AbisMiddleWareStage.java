@@ -191,6 +191,7 @@ public class AbisMiddleWareStage extends MosipVerticleAPIManager {
 				};
 				mosipQueueManager.consume(queue, abisQueue.getOutboundQueueName(), listener);
 			}
+
 		} catch (Exception e) {
 			regProcLogger.error(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
 					"", ExceptionUtils.getStackTrace(e));
