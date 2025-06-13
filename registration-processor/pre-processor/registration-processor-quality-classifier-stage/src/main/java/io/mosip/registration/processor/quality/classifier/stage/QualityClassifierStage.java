@@ -231,6 +231,7 @@ public class QualityClassifierStage extends MosipVerticleAPIManager {
 			String individualBiometricsObject = basedPacketManagerService.getFieldByMappingJsonKey(regId,
 					MappingJsonConstants.INDIVIDUAL_BIOMETRICS, registrationStatusDto.getRegistrationType(),
 					ProviderStageName.QUALITY_CHECKER);
+			regProcLogger.info("RID ==> " + regId);
 			if (StringUtils.isEmpty(individualBiometricsObject)) {
 				packetManagerService.addOrUpdateTags(regId, getQualityTags(null));
 				description.setCode(PlatformErrorMessages.INDIVIDUAL_BIOMETRIC_NOT_FOUND.getCode());
@@ -248,6 +249,7 @@ public class QualityClassifierStage extends MosipVerticleAPIManager {
 				BiometricRecord biometricRecord = basedPacketManagerService.getBiometricsByMappingJsonKey(regId,
 						MappingJsonConstants.INDIVIDUAL_BIOMETRICS, registrationStatusDto.getRegistrationType(),
 						ProviderStageName.QUALITY_CHECKER);
+
 
 				if (biometricRecord == null || CollectionUtils.isEmpty(biometricRecord.getSegments())) {
 					biometricRecord = basedPacketManagerService.getBiometricsByMappingJsonKey(regId,
@@ -406,7 +408,7 @@ public class QualityClassifierStage extends MosipVerticleAPIManager {
 	}
 	
 	private Map<String, String> getQualityTags(List<BIR> birs) throws BiometricException{
-		
+		regProcLogger.info("getQualityTags ==> " );
 		Map<String, String> tags = new HashMap<String, String>();
 
 		// setting biometricNotAvailableTagValue for each modality in case biometrics are not available
@@ -448,7 +450,7 @@ public class QualityClassifierStage extends MosipVerticleAPIManager {
 			
 			float score = qualityScoreresponse[0];
 			String bioType = bir.getBdbInfo().getType().get(0).value();
-
+				regProcLogger.info("score ==> " + score+", biotype ==>"+bioType);
 			// Check for entry
 			Float storedMinScore = bioTypeMinScoreMap.get(bioType);
 
@@ -456,7 +458,8 @@ public class QualityClassifierStage extends MosipVerticleAPIManager {
 					storedMinScore == null ? score : storedMinScore > score ? score : storedMinScore);
 			}
 		}
-
+		regProcLogger.info("bioTypeMinScoreMap ==> " + bioTypeMinScoreMap);
+		regProcLogger.info("parsedQualityRangeMap ==> " + parsedQualityRangeMap);
 		for (Entry<String, Float> bioTypeMinEntry : bioTypeMinScoreMap.entrySet()) {
 
 			for (Entry<String, int[]> qualityRangeEntry : parsedQualityRangeMap.entrySet()) {
@@ -477,6 +480,7 @@ public class QualityClassifierStage extends MosipVerticleAPIManager {
 				tags.put(qualityTagPrefix.concat(modality), biometricNotAvailableTagValue);
 			}
 		});
+		regProcLogger.info("Tag ==> " + tags.toString());
 
 		return tags;
 	}

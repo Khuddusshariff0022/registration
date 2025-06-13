@@ -285,12 +285,13 @@ public class PacketManagerService {
 
     public void addOrUpdateTags(String id, Map<String, String> tags) throws ApisResourceAccessException, PacketManagerException, JsonProcessingException, IOException {
         UpdateTagRequestDto updateTagRequestDto = new UpdateTagRequestDto(id, tags);
-
+        regProcLogger.info("addOrUpdateTags ==> Start" );
         RequestWrapper<UpdateTagRequestDto> request = new RequestWrapper<>();
         request.setId(ID);
         request.setVersion(VERSION);
         request.setRequesttime(DateUtils.getUTCCurrentDateTime());
         request.setRequest(updateTagRequestDto);
+        regProcLogger.info("updateTagRequestDto ==> " + updateTagRequestDto);
         ResponseWrapper<Void> response = (ResponseWrapper) restApi.postApi(ApiName.PACKETMANAGER_UPDATE_TAGS, "", "", request, ResponseWrapper.class);
 
         if (response.getErrors() != null && response.getErrors().size() > 0) {
