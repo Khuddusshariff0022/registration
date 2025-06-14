@@ -932,10 +932,12 @@ public String getInternalProcess(Map<String, String> additionalProcessMap, Strin
 		//Fetching the packet created date and time
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
 				"utility::wasApplicantInfant()::entry");
-		Date packetCeatedDate=getPacketcreatedDateAndtimesFromIdrepo(registrationStatusDto.getRegistrationId(), registrationStatusDto.getRegistrationType());
+		Date packetCeatedDate=new Date();
+//		packetCeatedDate=getPacketcreatedDateAndtimesFromIdrepo(registrationStatusDto.getRegistrationId(), registrationStatusDto.getRegistrationType());
 		if (packetCeatedDate==null){
 			//Getting the Last Interacted Rid From Idrepo.
 			RidDto ridDto= getIndividualIdResponceFromIdrepo(registrationStatusDto.getRegistrationId(),registrationStatusDto.getRegistrationType());
+			ridDto.setUpd_dtimes(packetCreatedDateValueFromConfig);
 			packetCeatedDate=getPacketCreationDateTimeFromRegList(ridDto.getRid());
 			if (packetCeatedDate==null) {
 				packetCeatedDate=getPacketCreatedDateTimeFromRid(ridDto.getRid());
