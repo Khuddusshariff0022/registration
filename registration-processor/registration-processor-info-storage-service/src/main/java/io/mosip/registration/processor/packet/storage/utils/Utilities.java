@@ -932,7 +932,8 @@ public String getInternalProcess(Map<String, String> additionalProcessMap, Strin
 		//Fetching the packet created date and time
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
 				"utility::wasApplicantInfant()::entry");
-		Date packetCeatedDate=getPacketcreatedDateAndtimesFromIdrepo(registrationStatusDto.getRegistrationId(), registrationStatusDto.getRegistrationType());
+		Date packetCeatedDate=new Date();
+		packetCeatedDate= getPacketcreatedDateAndtimesFromIdrepo(registrationStatusDto.getRegistrationId(), registrationStatusDto.getRegistrationType());
 		if (packetCeatedDate==null){
 			//Getting the Last Interacted Rid From Idrepo.
 			RidDto ridDto= getIndividualIdResponceFromIdrepo(registrationStatusDto.getRegistrationId(),registrationStatusDto.getRegistrationType());
@@ -940,8 +941,7 @@ public String getInternalProcess(Map<String, String> additionalProcessMap, Strin
 			if (packetCeatedDate==null) {
 				packetCeatedDate=getPacketCreatedDateTimeFromRid(ridDto.getRid());
 				if (packetCeatedDate==null){
-					packetCeatedDate =convertToDate(packetCreatedDateValueFromConfig);
-//					packetCeatedDate= getPacketUpdateDateFromIdRepo(ridDto);
+					packetCeatedDate= getPacketUpdateDateFromIdRepo(ridDto);
 					if(packetCeatedDate==null) {
 						regProcLogger.error(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
 								"Unable to get Packet Created Date and Time");
