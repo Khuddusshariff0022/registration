@@ -82,9 +82,8 @@ public class UtilitiesTest {
         ReflectionTestUtils.setField(utilities, "bufferInMonthes", 1);
         ReflectionTestUtils.setField(utilities, "MinAgeLimit", 0);
         ReflectionTestUtils.setField(utilities, "MaxAgeLimit", 150);
-
+        ReflectionTestUtils.setField(utilities, "ageLimit", "5");
     }
-
 
     @Test
     public void testWasApplicantInfant_Success_getFromIdrepo() throws Exception {
