@@ -191,6 +191,7 @@ public class BioDedupeProcessor {
 				if (packetStatus.equalsIgnoreCase(AbisConstant.PRE_ABIS_IDENTIFICATION)) {
 					updatePacketPreAbisIdentification(registrationStatusDto, object);
 				} else if (packetStatus.equalsIgnoreCase(AbisConstant.POST_ABIS_IDENTIFICATION)) {
+					regProcLogger.info( "INSERRT INTO UPDATE PACKET POST ABIS IDENTIFICATION ==>");
 					postAbisIdentification(registrationStatusDto, object, registrationType);
 				}
 
@@ -422,6 +423,7 @@ public class BioDedupeProcessor {
 				registrationType, registrationStatusDto.getIteration(), registrationStatusDto.getWorkflowInstanceId(), ProviderStageName.BIO_DEDUPE);
 		Set<String> matchedRegIds = res.getResponse();
 		//For update flow, when we get 0 match from abis.
+		regProcLogger.info("Matched RegIds ==> ", res.getIsResponceNull());
 		if (res.getIsResponceNull() &&
 				registrationStatusDto.getRegistrationType().equalsIgnoreCase(SyncTypeDto.UPDATE.toString())) {
 			regProcLogger.info("No match Found for the Biometric : ", registrationStatusDto.getRegistrationId());

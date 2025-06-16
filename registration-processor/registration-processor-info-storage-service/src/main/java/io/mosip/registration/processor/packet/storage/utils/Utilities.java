@@ -960,7 +960,7 @@ public String getInternalProcess(Map<String, String> additionalProcessMap, Strin
 
 	/**    get packet created date and time from idrepo */
 	public Date getPacketcreatedDateAndtimesFromIdrepo(String rid, String process) throws PacketManagerException, ApisResourceAccessException, IOException, JsonProcessingException, ParseException {
-		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
+		regProcLogger.info(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
 				"utility::getPacketcreatedDateAndtimesFromIdrepo()::entry");
 		//Getting Uin from packetmanager from update packet */
 		String uin=packetManagerService.getField(rid,UIN,process,ProviderStageName.BIO_DEDUPE);
@@ -979,7 +979,7 @@ public String getInternalProcess(Map<String, String> additionalProcessMap, Strin
 		String[] str=packetCreatedDate.split("T");
 //        return str[0].replace("-","/");
 		Date date=convertToDate(parseDate(packetCreatedDate));
-		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
+		regProcLogger.info(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
 				"utility::getPacketcreatedDateAndtimesFromIdrepo()::exit");
 		return date;
 	}
