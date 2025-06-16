@@ -188,6 +188,9 @@ public class Utilities {
 	@Value("${registration.processor.packetProcessing.buffer-in-months}")
 	private int bufferInMonthes;
 
+	@Value("${mosip.kernel.applicant.type.age.limit}")
+	private String ageLimit;
+
 
 	@Autowired
 	private PacketInfoDao packetInfoDao;
@@ -953,9 +956,12 @@ public String getInternalProcess(Map<String, String> additionalProcessMap, Strin
 		Date dobOfApplicant=convertToDate(getDateOfBirthFromIdrepo(registrationStatusDto.getRegistrationId(), registrationStatusDto.getRegistrationType()));
 		regProcLogger.info("Date of Birth of Applicant: "+dobOfApplicant);
 		int age=calculateAgeAtTheTimeOfRegistration(dobOfApplicant, packetCeatedDate);
+
 		regProcLogger.info(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
 				"utility::wasApplicantInfant()::exit with age: "+age);
-		return true;
+
+		int ageThreshold = Integer.parseInt(ageLimit);
+		return age < ageThreshold;
 	}
 
 
