@@ -951,8 +951,9 @@ public String getInternalProcess(Map<String, String> additionalProcessMap, Strin
 			}
 		}
 		Date dobOfApplicant=convertToDate(getDateOfBirthFromIdrepo(registrationStatusDto.getRegistrationId(), registrationStatusDto.getRegistrationType()));
+		regProcLogger.info("Date of Birth of Applicant: "+dobOfApplicant);
 		int age=calculateAgeAtTheTimeOfRegistration(dobOfApplicant, packetCeatedDate);
-		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
+		regProcLogger.info(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
 				"utility::wasApplicantInfant()::exit with age: "+age);
 		return true;
 	}
@@ -972,15 +973,18 @@ public String getInternalProcess(Map<String, String> additionalProcessMap, Strin
 			packetCreatedDate=JsonUtil.getJSONValue(responseDTO,PACKETCREATEDDATE);
 			if (packetCreatedDate==null || packetCreatedDate=="")
 			{
+				regProcLogger.info("responseDTO dose not contains packetCreatedDate value");
 				return null;
 			}
 		}
-		else {return null;}
-		String[] str=packetCreatedDate.split("T");
-//        return str[0].replace("-","/");
+		else {
+			regProcLogger.info("responseDTO dose not contains packetCreatedDate");
+			return null;
+		}
+
 		Date date=convertToDate(parseDate(packetCreatedDate));
 		regProcLogger.info(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.UIN.toString(), "",
-				"utility::getPacketcreatedDateAndtimesFromIdrepo()::exit");
+				"utility::getPacketcreatedDateAndtimesFromIdrepo()::exit with date: "+date);
 		return date;
 	}
 
@@ -1069,7 +1073,7 @@ public String getInternalProcess(Map<String, String> additionalProcessMap, Strin
 
 	//Minimum and Maximum age needs to be fetched from Properties
 	public int calculateAgeAtTheTimeOfRegistration(Date dob, Date registeredDate) throws Exception {
-		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(), "",
+		regProcLogger.info(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(), "",
 				"utility::calculateAgeAtTheTimeOfRegistration():: entry");
 
 		// Convert Date objects to LocalDate
@@ -1087,7 +1091,7 @@ public String getInternalProcess(Map<String, String> additionalProcessMap, Strin
 			throw new IOException(PlatformErrorMessages.RPR_PDS_AGE_INVALID_EXCEPTION.getMessage());
 		}
 
-		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(), "",
+		regProcLogger.info(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(), "",
 				"utility::calculateAgeAtTheTimeOfRegistration():: exit");
 
 		// Return age in years (as per the original method signature)

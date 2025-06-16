@@ -457,7 +457,8 @@ public class BioDedupeProcessor {
 					throw new BiometricNotFoundException();
 				}
 			}
-		}		ArrayList<String> matchedRegIdsList = new ArrayList<String>(matchedRegIds);
+		}
+		ArrayList<String> matchedRegIdsList = new ArrayList<String>(matchedRegIds);
 		// TODO : temporary fix. Need to analyze more.
 		if (matchedRegIds != null && !matchedRegIds.isEmpty()
 				&& matchedRegIds.contains(registrationStatusDto.getRegistrationId())) {
