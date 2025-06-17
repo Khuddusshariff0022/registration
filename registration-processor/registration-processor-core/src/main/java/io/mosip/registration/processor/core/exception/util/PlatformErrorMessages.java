@@ -980,8 +980,6 @@ public enum PlatformErrorMessages {
 	/** The rpr bdd invalid age. */
 	RPR_BDD_INVALID_AGE(PlatformConstants.RPR_BIO_DEDUPE_SERVICE_MODULE + "012", "Invalid Age"),
 
-	RPR_BDD_
-
 	/** *** System Exception ****. */
 
 	RPR_SYS_UNEXCEPTED_EXCEPTION(PlatformConstants.RPR_SYSTEM_EXCEPTION + "001", "Unexpected exception"),
