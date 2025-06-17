@@ -297,6 +297,7 @@ public class BioDedupeProcessor {
 					description.getMessage() + "\n" + ExceptionUtils.getStackTrace(ex));
 			object.setInternalError(Boolean.TRUE);
 		} finally {
+			regProcLogger.info("Finally block executed for BioDedupeProcessor : isDuplicateRequestForSameTransactionId :: "+isDuplicateRequestForSameTransactionId);
 			if (!isDuplicateRequestForSameTransactionId) {
 				if (object.getInternalError()) {
 					updateErrorFlags(registrationStatusDto, object);
@@ -318,12 +319,14 @@ public class BioDedupeProcessor {
 				auditLogRequestBuilder.createAuditRequestBuilder(description.getMessage(), eventId, eventName, eventType,
 						moduleId, moduleName, registrationId);
 			} else {
+				regProcLogger.info("Duplicate request received for same latest transaction id. This will be ignored.");
 				regProcLogger.error(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
 						registrationId, "Duplicate request received for same latest transaction id. This will be ignored.");
 				object.setIsValid(false);
 				object.setInternalError(true);
 			}
 		}
+		re
 		return object;
 	}
 
