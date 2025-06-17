@@ -326,7 +326,7 @@ public class BioDedupeProcessor {
 				object.setInternalError(true);
 			}
 		}
-		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
+		regProcLogger.info(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
 				registrationId, "BioDedupeProcessor::process::exit object: " + object.toString());
 		return object;
 	}
