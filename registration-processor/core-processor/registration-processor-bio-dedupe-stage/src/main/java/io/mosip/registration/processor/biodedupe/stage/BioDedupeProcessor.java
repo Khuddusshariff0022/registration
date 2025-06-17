@@ -272,7 +272,7 @@ public class BioDedupeProcessor {
 		catch (BiometricNotFoundException ex) {
 			registrationStatusDto.setStatusCode(RegistrationStatusCode.FAILED.name());
 			registrationStatusDto.setStatusComment(trimExceptionMessage
-					.trimExceptionMessage(StatusUtil.BIO_DEDUPE_NO_BIOMETRICS_FOUND + ex.getMessage()));
+					.trimExceptionMessage(ex.getMessage()));
 			registrationStatusDto.setSubStatusCode(StatusUtil.BIO_DEDUPE_NO_BIOMETRICS_FOUND.getCode());
 			registrationStatusDto.setLatestTransactionStatusCode(
 					registrationExceptionMapperUtil.getStatusCode(RegistrationExceptionTypeCode.DUPLICATE_UPLOAD_REQUEST_EXCEPTION));
@@ -469,7 +469,7 @@ public class BioDedupeProcessor {
 					//Not Infant and NO Biometric exception in last Interaction
 					regProcLogger.error(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
 							registrationStatusDto.getRegistrationId(), BioDedupeConstants.NO_BIOMETRIC_FOUND);
-					throw new BiometricNotFoundException();
+					throw new BiometricNotFoundException(StatusUtil.BIO_DEDUPE_NO_BIOMETRICS_FOUND.getMessage());
 				}
 			}
 		}
