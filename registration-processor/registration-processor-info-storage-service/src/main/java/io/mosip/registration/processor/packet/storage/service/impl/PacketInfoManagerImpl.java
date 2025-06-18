@@ -448,7 +448,7 @@ public class PacketInfoManagerImpl implements PacketInfoManager<Identity, Applic
 		String registrationId = messageDTO.getRid();
 
 		try {
-			regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.USERID.toString(),
+			regProcLogger.info(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.USERID.toString(),
 					registrationId, "PacketInfoManagerImpl::saveManualAdjudicationData()::entry");
 			for (String matchedRefId : uniqueMatchedRefIds) {
 				ManualVerificationEntity manualVerificationEntity = new ManualVerificationEntity();
@@ -484,6 +484,7 @@ public class PacketInfoManagerImpl implements PacketInfoManager<Identity, Applic
 				manualVerficationRepository.save(manualVerificationEntity);
 				isTransactionSuccessful = true;
 				description.setMessage("Manual Adjudication data saved successfully");
+				regProcLogger.info("manualVerificationStatus ==> " + manualVerificationStatus);
 			}
 
 		} catch (DataAccessLayerException e) {
