@@ -484,7 +484,7 @@ public class PacketInfoManagerImpl implements PacketInfoManager<Identity, Applic
 				manualVerficationRepository.save(manualVerificationEntity);
 				isTransactionSuccessful = true;
 				description.setMessage("Manual Adjudication data saved successfully");
-				regProcLogger.info("manualVerificationStatus ==> " + manualVerificationStatus);
+				regProcLogger.info("manualVerificationStatus ==> " + manualVerificationEntity.toString());
 			}
 
 		} catch (DataAccessLayerException e) {
