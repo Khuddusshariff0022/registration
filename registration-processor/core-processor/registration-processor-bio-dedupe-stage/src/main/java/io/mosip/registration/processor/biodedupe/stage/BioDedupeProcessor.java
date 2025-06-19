@@ -465,7 +465,7 @@ public class BioDedupeProcessor {
 					object.setRid(registrationStatusDto.getRegistrationId());
 					object.setIsValid(Boolean.TRUE);
 					object.setReg_type(registrationType);
-					object.setMessageBusAddress(MessageBusAddress.MANUAL_ADJUDICATION_BUS_IN);
+					object.setMessageBusAddress(MessageBusAddress.VERIFICATION_BUS_IN);
 					regProcLogger.info("registrationStatusDto ==> ", registrationStatusDto.toString());
 					regProcLogger.info("object"+object);
 					regProcLogger.error(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.REGISTRATIONID.toString(),
