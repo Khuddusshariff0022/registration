@@ -1,5 +1,12 @@
 package io.mosip.registration.processor.camel.bridge.intercepter;
 
+import io.mosip.registration.processor.core.code.ApiName;
+import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
+import io.mosip.registration.processor.core.packet.dto.masterdata.UserResponseDto;
+import io.mosip.registration.processor.core.packet.dto.packetmanager.DeleteCacheRequestDto;
+import io.mosip.registration.processor.core.packet.dto.packetmanager.DeleteCacheResponseDto;
+import io.mosip.registration.processor.core.spi.restclient.RegistrationProcessorRestClientService;
+import io.mosip.registration.processor.rest.client.service.impl.RegistrationProcessorRestClientServiceImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +32,9 @@ public class WorkflowCommandPredicate implements Predicate {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+
+	@Autowired
+	RegistrationProcessorRestClientServiceImpl registrationProcessorRestClientService;
 
 	@Override
 	public boolean matches(Exchange exchange) {
@@ -188,9 +198,17 @@ public class WorkflowCommandPredicate implements Predicate {
 		exchange.getMessage().setBody(objectMapper.writeValueAsString(workflowInternalActionDTO));
 	}
 
-	private void processPauseAndRequestAdditionalInfo(Exchange exchange) throws JsonProcessingException {
+	private void processPauseAndRequestAdditionalInfo(Exchange exchange) throws JsonProcessingException, ApisResourceAccessException {
 		String message = (String) exchange.getMessage().getBody();
 		JsonObject json = new JsonObject(message);
+		DeleteCacheRequestDto deleteCacheRequestDto=new DeleteCacheRequestDto();
+		deleteCacheRequestDto.setId(json.getString(JsonConstant.RID));
+		try {
+			DeleteCacheResponseDto deleteCacheResponseDto = (DeleteCacheResponseDto) registrationProcessorRestClientService.deleteApi(ApiName.PACKETMANAGER_DELETECACHE, null, null, null, deleteCacheRequestDto, DeleteCacheResponseDto.class, null);
+			LOGGER.info("PACKET MANAGER INFO CACHE DELETE SUCCESSFUL "+ deleteCacheResponseDto.getResponce());
+		}catch (Exception e){
+			LOGGER.info("EXCEPTION PACKET MANAGER INFO CACHE DELETE");
+		}
 		WorkflowInternalActionDTO workflowInternalActionDTO = new WorkflowInternalActionDTO();
 		workflowInternalActionDTO.setResumeTimestamp(DateUtils.formatToISOString(
 				DateUtils.getUTCCurrentDateTime()

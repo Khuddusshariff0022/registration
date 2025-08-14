@@ -210,6 +210,38 @@ public class RestApiClient {
 		}
 	}
 
+	/**
+	 * Delete api.
+	 *
+	 * @param <T>           the generic type
+	 * @param uri           the uri
+	 * @param requestType   the request type
+	 * @param responseClass the response class
+	 * @param mediaType
+	 * @return the t
+	 * @throws Exception the exception
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T deleteApi(String uri, Object requestType, Class<?> responseClass, MediaType mediaType) throws Exception {
+
+		T result = null;
+		ResponseEntity<T> response = null;
+		try {
+			logger.info(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.APPLICATIONID.toString(),
+					LoggerFileConstant.APPLICATIONID.toString(), uri);
+
+			response = (ResponseEntity<T>) localRestTemplate.exchange(uri, HttpMethod.DELETE,
+					setRequestHeader(requestType, mediaType), responseClass);
+			result = response.getBody();
+		} catch (Exception e) {
+			logger.error(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.APPLICATIONID.toString(),
+					LoggerFileConstant.APPLICATIONID.toString(), e.getMessage() + ExceptionUtils.getStackTrace(e));
+			tokenExceptionHandler(e);
+			throw e;
+		}
+		return result;
+	}
+
 	public RestTemplate getRestTemplate() {
 		return localRestTemplate;
 	}
